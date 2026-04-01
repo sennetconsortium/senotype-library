@@ -1,9 +1,12 @@
-import BasicExample from '@/components/BasicExample'
+'use client'
+import FullLayout from '@/components/layout/FullLayout'
 import React from 'react'
 
 function page() {
   return (
-    <div><BasicExample /></div>
+    <div><FullLayout>
+      Test
+      </FullLayout></div>
   )
 }
 
