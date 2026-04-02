@@ -6,7 +6,7 @@
   box-sizing border-box
 
 html 
-  font-size 16px
+  font-size 14px
   line-height 22px
   
 html, body
@@ -23,12 +23,9 @@ body
 li  
   list-style-position inside
 
-a, a:visited
-  color $col-primary-blue
+a, a:visited, a:hover
   text-decoration none
 
-a:hover
-  text-decoration underline
 
 .hide 
   hide()
@@ -47,3 +44,6 @@ img:not(.w-fixed)
   width -webkit-fill-available
   +sm()
     width 100%
+
+.height-100vh
+  min-height 100vh

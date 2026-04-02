@@ -4,9 +4,11 @@ import React from 'react'
 
 function page() {
   return (
-    <div><FullLayout>
-      Test
-      </FullLayout></div>
+    <div>
+      <FullLayout>
+        Test
+      </FullLayout>
+    </div>
   )
 }
 
