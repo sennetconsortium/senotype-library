@@ -18,7 +18,18 @@ function SenotypeForm() {
       >
         <Tab eventKey="main" title="Submission">
           <AppAccordion title={'Basic'}>
-            <InputField label={'Name'} />
+            <InputField label={'Name'} controlProps={{
+              required: true,
+            }} />
+            <InputField label={'Description'} controlProps={{
+              as: 'textarea',
+              rows: 3
+            }} />
+          </AppAccordion>
+          <AppAccordion title={'Type'}>
+            <InputField label={'Taxon/Source Type'} id='source_type' controlProps={{
+              required: true,
+            }} />
           </AppAccordion>
         </Tab>
         <Tab eventKey="metadata" title="Metadata">

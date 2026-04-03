@@ -1,9 +1,9 @@
 import React from 'react'
 import Accordion from 'react-bootstrap/Accordion';
 
-function AppAccordion({title, id, children}) {
+function AppAccordion({title, id, children, className = 'mt-4'}) {
   return (
-    <div>
+    <div className={className}>
       <Accordion defaultActiveKey={id}>
       <Accordion.Item eventKey={id}>
         <Accordion.Header>{title}</Accordion.Header>
