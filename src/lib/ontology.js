@@ -15,7 +15,8 @@ const createFile = async (filePath, data, prefix = '') => {
 
 const ONTOLOGY = {
   fetch: async (codes, code) => {
-    const path = codes[code].path || ENVS.ontology.valueset.replaceAll('{code}', code)
+    const path = codes[code].path || ENVS.ontology.valueset.replaceAll('{code}', codes[code])
+    log.debug('ONTOLOGY.fetch', path)
     const url = URLS.api.ontology + path 
     const response = await fetch(url)
     if (response.ok) {
@@ -39,24 +40,30 @@ const ONTOLOGY = {
   },
   buildCache: async () => {
     const filePath = ONTOLOGY_CACHE_PATH + '/ontology.js';
+    let ontologyJson
     try {
       log.info('Ontology.buildCache', '...', filePath)
-      let ontologyJson = await import('@/cache/ontology.js')
+      ontologyJson = await import('@/cache/ontology.js')
       //const ontologyJson = await fs.readFile(filePath, 'utf8')
-      return ontologyJson
+      
     } catch (e) {
       log.error('Error.Ontology.buildCache', e)
-
       try {
          log.info('Ontology.buildCache', 'Creating ...')
           const results = await ONTOLOGY.fetchAll();
-          await createFile(filePath, results, 'export const ontologyJson=')
-          let ontologyJson = await import('@/cache/ontology.js')
-          return ontologyJson
+          let ontologyResults = {}
+          for (const r of results) {
+            for (const c in r) {
+              ontologyResults[c] = r[c]
+            }
+          }
+          await createFile(filePath, ontologyResults, 'export const ontologyJson=')
+          ontologyJson = await import('@/cache/ontology.js')
       } catch (e) {
         log.error('Error.Ontology.buildCache.catch', e)
       }
     }
+    return ontologyJson
   }
 }
 

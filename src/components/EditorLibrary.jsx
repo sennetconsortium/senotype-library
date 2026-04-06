@@ -14,7 +14,7 @@ const EditorLibrary = () => {
   const senotypeDict = useRef({})
 
   useEffect(() => {
-    if (results) {
+    if (results && Array.isArray(results.results)) {
       let res = []
       for (const r of results.results) {
         senotypeDict.current[r.senotypeid] = r

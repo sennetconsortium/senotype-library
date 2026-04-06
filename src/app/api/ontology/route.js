@@ -3,6 +3,6 @@ import ONTOLOGY from "@/lib/ontology"
 
 export async function GET() {
 
-  const ontology = await ONTOLOGY.buildCache()
-  return NextResponse.json({ ontology })
+  const result = await ONTOLOGY.buildCache()
+  return NextResponse.json({ ontology: result?.ontologyJson }, { status: result?.ontologyJson ? 200 : 404 })
 }

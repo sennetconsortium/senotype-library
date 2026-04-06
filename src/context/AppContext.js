@@ -5,17 +5,29 @@ const AppContext = createContext({})
 
 export const AppProvider = ({ children, auth }) => {
   const [authInfo, setAuthInfo] = useState({})
+  const [ontology, setOntology] = useState(null)
   const fetchAuthInfo = async () => {
     setAuthInfo(await auth)
   }
 
   const fetchOntology = async () => {
-    await fetch(URLS.api.local('ontology'))
+    if (!sessionStorage.getItem('oneTimeInit')) {
+      const response = await fetch(URLS.api.local('ontology'))
+      if (response.ok) {
+        const result = await response.json()
+        if (Object.keys(result.ontology).length) {
+          window.ONTOLOGY_CACHE = result.ontology
+          setOntology(result.ontology)
+          sessionStorage.setItem('oneTimeInit', true)
+        }
+      }
+   }
+    
   }
 
   useEffect(() => {
-    fetchAuthInfo()
     fetchOntology()
+    fetchAuthInfo()
   }, [authInfo])
 
   return (
