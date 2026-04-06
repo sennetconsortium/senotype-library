@@ -14,7 +14,7 @@ export default function RootLayout({ children }) {
       
         <ErrorBoundary>
           <AntdRegistry>
-            <MountedWrapper auth={getAuth()}>
+            <MountedWrapper>
                {children}
             </MountedWrapper>
           </AntdRegistry>

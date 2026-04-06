@@ -1,13 +1,20 @@
+import API from '@/lib/api'
+import AUTH from '@/lib/auth'
 import URLS from '@/lib/urls'
 import { createContext, useEffect, useState } from 'react'
 
 const AppContext = createContext({})
 
-export const AppProvider = ({ children, auth }) => {
-  const [authInfo, setAuthInfo] = useState({})
+export const AppProvider = ({ children }) => {
+  const [auth, setAuth] = useState({})
   const [ontology, setOntology] = useState(null)
-  const fetchAuthInfo = async () => {
-    setAuthInfo(await auth)
+
+  const fetchAuth = async () => {
+    const info = AUTH.info()
+    const ops = {token: info.groups_token, method: 'GET'}
+    const admin = await API.fetch({url: URLS.api.ingest.privs.admin, ...ops})
+    const groups = await API.fetch({url: URLS.api.ingest.privs.groups, ...ops})
+    setAuth({...info, isAuthenticated: admin !== null, isAuthorized: admin !== null, isAdmin: admin.has_data_admin_privs, userGroups: groups.user_write_groups})
   }
 
   const fetchOntology = async () => {
@@ -27,13 +34,14 @@ export const AppProvider = ({ children, auth }) => {
 
   useEffect(() => {
     fetchOntology()
-    fetchAuthInfo()
-  }, [authInfo])
+    fetchAuth()
+  }, [])
 
   return (
     <AppContext.Provider
       value={{
-        authInfo
+        auth,
+        ontology
       }}>{children}
     </AppContext.Provider>
   )

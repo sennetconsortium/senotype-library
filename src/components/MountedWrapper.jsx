@@ -1,10 +1,10 @@
 "use client";
 import { AppProvider } from "@/context/AppContext";
 
-function MountedWrapper({children, auth}) {
+function MountedWrapper({children}) {
 
   return (
-    <AppProvider auth={auth}>
+    <AppProvider>
       {children}
     </AppProvider>
   )

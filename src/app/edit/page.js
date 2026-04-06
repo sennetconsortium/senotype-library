@@ -1,5 +1,5 @@
 'use client'
-import FullLayout from '@/components/layout/FullLayout'
+import SiderLayout from '@/components/layout/SiderLayout'
 import Senotype from '@/components/Senotype/Senotype'
 import { EditProvider } from '@/context/EditContext'
 
@@ -7,9 +7,9 @@ import { EditProvider } from '@/context/EditContext'
 function page() {
   return (
     <EditProvider>
-      <FullLayout>
+      <SiderLayout>
         <Senotype />
-      </FullLayout>
+      </SiderLayout>
     </EditProvider>
   )
 }

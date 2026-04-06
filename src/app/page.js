@@ -5,27 +5,20 @@ import BasicLayout from "@/components/layout/BasicLayout";
 import Login from "@/components/Login";
 import AppContext from "@/context/AppContext";
 import URLS from '@/lib/urls';
-import useAuth from '@/hooks/useAuth';
 
 
 export default function Home() {
-  const { authInfo } = useContext(AppContext)
-  const { isAuthorized, setAuthInfo } = useAuth({ authInfo })
-  
+  const { auth } = useContext(AppContext)
 
   useEffect(() => {
-    setAuthInfo(authInfo)
-  }, [authInfo])
-
-  useEffect(() => {
-    if (isAuthorized) {
+    if (auth.isAuthorized) {
       window.location = URLS.edit
     }
-  }, [isAuthorized])
+  }, [auth])
 
   return (
     <div>
-     <BasicLayout>
+     <BasicLayout fluid={undefined}>
        <Login />
      </BasicLayout>
     </div>

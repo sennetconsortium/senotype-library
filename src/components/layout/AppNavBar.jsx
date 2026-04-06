@@ -8,7 +8,7 @@ import ENVS from '@/lib/envs';
 import AppContext from '@/context/AppContext';
 
 function AppNavBar() {
-  const {authInfo} = useContext(AppContext)
+  const {auth} = useContext(AppContext)
   return (
     <Navbar expand="lg" className="c-header" data-bs-theme="dark">
       <Container fluid>
@@ -28,7 +28,7 @@ function AppNavBar() {
         <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
           <Nav>
             {/* <Nav.Link href="#home">Home</Nav.Link> */}
-            <NavDropdown title={authInfo.name} id="basic-nav-dropdown">
+            <NavDropdown title={auth.name} id="basic-nav-dropdown">
               <NavDropdown.Item href="#action/3.3">Copy Globus Token</NavDropdown.Item>
               <NavDropdown.Divider />
               <NavDropdown.Item href="/logout">
