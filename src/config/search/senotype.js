@@ -3,8 +3,9 @@ import SEARCH from '@/lib/search';
 import URLS from '@/lib/urls';
 import ENVS from '@/lib/envs';
 import AUTH from '@/lib/auth';
+import { parseOntologyTerm } from '@/lib/general';
 
-const { doesAggregationHaveBuckets, bucketsTransform, submitterTransform } = SEARCH
+const { doesAggregationHaveBuckets, bucketsTransform, submitterTransform, organBucketsTransform } = SEARCH
 const connector = new SearchAPIConnector({
     indexName: ENVS.index.senotype,
     indexUrl: URLS.api.search,
@@ -122,6 +123,18 @@ export const SEARCH_SENOTYPE = {
                 isAggregationActive: true,
                 isFacetVisible: doesAggregationHaveBuckets('source_type')
             },
+            // 'organ': {
+            //     label: 'Organ',
+            //     type: 'value',
+            //     field: 'assertions.objects.term.keyword',
+            //     isExpanded: false,
+            //     filterType: 'any',
+            //     isFilterable: false,
+            //     facetType: 'term',
+            //     bucketsTransform: bucketsTransform,
+            //     isAggregationActive: true,
+            //     isFacetVisible: doesAggregationHaveBuckets('organ')
+            // },
             'organ': {
                 label: 'Organ',
                 type: 'value',
@@ -129,8 +142,17 @@ export const SEARCH_SENOTYPE = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
-                facetType: 'term',
-                bucketsTransform: bucketsTransform,
+                facetType: 'hierarchy',
+                bucketsTransform: organBucketsTransform,
+                groupByField: 'assertions.objects.term.keyword',
+                isHierarchyOption: (option) => {
+                    return ONTOLOGY_CACHE.organ_types.laterals.includes(option)
+                },
+                filterSubValues: (value, subValues) => {
+                    return subValues.filter((subValue) => {
+                        return subValue.key.toLowerCase().startsWith(value.toLowerCase())
+                    })
+                },
                 isAggregationActive: true,
                 isFacetVisible: doesAggregationHaveBuckets('organ')
             },

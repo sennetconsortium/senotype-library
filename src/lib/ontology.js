@@ -9,6 +9,7 @@ const ONTOLOGY_CACHE_PATH = path.join(process.cwd(), 'src/cache')
 const IMPORT_PATH = './../cache/ontology.js'
 const delay = (ms) => new Promise(res => setTimeout(res, ms));
 const exportString = 'export const ontology='
+const filePath = ONTOLOGY_CACHE_PATH + '/ontology.js';
 
 const ONTOLOGY = {
   fetch: async (codes, code) => {
@@ -39,6 +40,7 @@ const ONTOLOGY = {
     const terms = {}
     let termsFlipped = {}
     const hierarchy = {}
+    const laterals = new Set()
     let valueKey = 'term'
     let keyKey = 'term'
     const isOrgans = 'organ_types' === key
@@ -52,17 +54,18 @@ const ONTOLOGY = {
       terms[d[keyKey]] = d[valueKey]
       if (isOrgans) {
         hierarchy[d[keyKey]] = d.category?.term || d[keyKey]
+        if (d.category?.term) {
+          laterals.add(d.category?.term)
+        }
       }
     }
     if (isOrgans) {
       termsFlipped = flipObj(terms)
     }
-    //log.info('Ontology.structureData', terms)
-    return { terms, termsFlipped, hierarchy }
+    return { terms, termsFlipped, hierarchy, laterals: Array.from(laterals) }
   },
   createImport: async () => {
-    const filePath = ONTOLOGY_CACHE_PATH + '/ontology.js';
-    
+  
     try {
       log.info('Ontology.createImport', 'Creating ...', filePath)
       const results = await ONTOLOGY.fetchAll();
@@ -90,7 +93,7 @@ const ONTOLOGY = {
       log.info('Ontology.getImport', '...')
       let ontology = await fs.readFile(filePath, 'utf8')
       ontology = JSON.parse(ontology.replace(exportString, ''))
-      log.info('Ontology.getImport', '...', module.ontology)
+      log.info('Ontology.getImport', '...', ontology)
       
       if (!ontology || !Object.values(ontology).length) {
         return await ONTOLOGY.createImport()
