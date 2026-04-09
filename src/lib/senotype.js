@@ -11,6 +11,10 @@ const HGNC_BASE_URL = process.env.NEXT_PUBLIC_HGNC_BASE_URL
 const HGNC_HOME_URL = process.env.NEXT_PUBLIC_HGNC_HOME_URL
 const UNIPROTKB_BASE_URL = process.env.NEXT_PUBLIC_UNIPROTKB_BASE_URL
 
+const SCICRUNCH_BASE_URL = process.env.NEXT_PUBLIC_SCICRUNCH_BASE_URL
+const SCICRUNCH_EXPLORE_URL = process.env.NEXT_PUBLIC_SCICRUNCH_EXPLORE_URL
+const SCICRUNCH_HIGHER_URL=process.env.NEXT_PUBLIC_SCICRUNCH_HIGHER_URL
+
 export async function fetchSenotype(senotype_id, auth = null) {
     let data = {}
 
@@ -59,6 +63,22 @@ export async function fetchSenotype(senotype_id, auth = null) {
     }
 
     return data
+}
+
+export function getSciCrunchUrl(searchTerm) {
+    let baseUrl = ''
+    if (searchTerm.includes('-')) {
+        baseUrl = SCICRUNCH_HIGHER_URL
+        let lowerParam = searchTerm.split('-')[0]
+        searchTerm = `${lowerParam}?i=rrid%3A${searchTerm}`
+    } else {
+        baseUrl = SCICRUNCH_BASE_URL
+    }
+    return `${baseUrl}${searchTerm}`
+}
+
+export function getOboDetailsUrl(id) {
+    return getBioDetailUrl('OBO', id)
 }
 
 export function getMarkerDetailsUrl(id) {

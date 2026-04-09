@@ -2,7 +2,7 @@ import AppAccordion from "@/components/layout/AppAccordion";
 import React, {useRef, useState} from "react";
 import {LinkOutlined, SearchOutlined} from '@ant-design/icons';
 import {Button, Descriptions, Input, Space, Table} from 'antd';
-import {getMarkerDetailsUrl} from "@/lib/senotype";
+import {getMarkerDetailsUrl, getOboDetailsUrl, getSciCrunchUrl} from "@/lib/senotype";
 
 const buildSummary = (senotype) => {
     return [
@@ -39,12 +39,12 @@ const buildSenotype = (senotype) => {
     let locationChildren = senotype.assertions
         .filter(item => item.predicate?.term === "located_in")
         .flatMap(item => item.objects)
-        .map(obj => obj.term);
+        .map(obj => ({key: obj.code, value: obj.term}));
 
     let celltypeChildren = senotype.assertions
         .filter(item => item.predicate?.term === "has_cell_type")
         .flatMap(item => item.objects)
-        .map(obj => `${obj.code} (${obj.term})`);
+        .map(obj => ({key: obj.code, value: `${obj.code} (${obj.term})`}));
 
     let hallmarkChildren = senotype.assertions
         .filter(item => item.predicate?.term === "has_hallmark")
@@ -69,7 +69,7 @@ const buildSenotype = (senotype) => {
     let diagnosisChildren = senotype.assertions
         .filter(item => item.predicate?.term === "has_diagnosis")
         .flatMap(item => item.objects)
-        .map(obj => obj.term);
+        .map(obj => ({key: obj.code, value: obj.term}));
 
     let keyCounter = 4
     let items = [
@@ -90,7 +90,9 @@ const buildSenotype = (senotype) => {
             children: <span className={'flex'}>
                         {locationChildren.map((item, index) => (
                             <div key={`location_${index}`} className={'mb-1'}>
-                                {item}
+                                {item.value} <a target={'_blank'}
+                                                href={getOboDetailsUrl(item.key.replace(':', '_'))}>
+                                <LinkOutlined/></a>
                             </div>
                         ))}
                     </span>
@@ -101,7 +103,9 @@ const buildSenotype = (senotype) => {
             children: <span className={'flex'}>
                         {celltypeChildren.map((item, index) => (
                             <div key={`celltype_${index}`} className={'mb-1'}>
-                                {item}
+                                {item.value} <a target={'_blank'}
+                                                href={getOboDetailsUrl(item.key.replace(':', '_'))}>
+                                <LinkOutlined/></a>
                             </div>
                         ))}
                     </span>
@@ -178,7 +182,9 @@ const buildSenotype = (senotype) => {
                 children: <span className={'flex'}>
                         {diagnosisChildren.map((item, index) => (
                             <div key={`diagnosis_${index}`} className={'mb-1'}>
-                                {item}
+                                {item.value} <a target={'_blank'}
+                                                href={getOboDetailsUrl(item.key.replace(':', '_'))}>
+                                <LinkOutlined/></a>
                             </div>
                         ))}
                     </span>
@@ -268,17 +274,17 @@ const buildReferences = (senotype) => {
     let citationChildren = senotype.assertions
         .filter(item => item.predicate?.term === "has_citation")
         .flatMap(item => item.objects)
-        .map(obj => `${obj.code} (${obj.term})`);
+        .map(obj => ({key: obj.code, value: `${obj.code} (${obj.term})`}));
 
     let originChildren = senotype.assertions
         .filter(item => item.predicate?.term === "has_origin")
         .flatMap(item => item.objects)
-        .map(obj => `${obj.code} (${obj.term})`);
+        .map(obj => ({key: obj.code, value: `${obj.code} (${obj.term})`}));
 
     let datasetChildren = senotype.assertions
         .filter(item => item.predicate?.term === "has_dataset")
         .flatMap(item => item.objects)
-        .map(obj => `${obj.code} (${obj.term})`);
+        .map(obj => ({key: obj.code, value: `${obj.code} (${obj.term})`}));
 
     if (citationChildren.length > 0) {
         keyCounter++
@@ -290,7 +296,9 @@ const buildReferences = (senotype) => {
                     <span className={'flex'}>
                         {citationChildren.map((item, index) => (
                             <div key={`citation_${index}`} className={'mb-2'}>
-                                {item}
+                                {item.value} <a target={'_blank'}
+                                                href={process.env.NEXT_PUBLIC_PUBMED_BASE_URL + item.key.replace("PMID:", "")}>
+                                <LinkOutlined/></a>
                             </div>
                         ))}
                     </span>
@@ -308,7 +316,9 @@ const buildReferences = (senotype) => {
                     <span className={'flex'}>
                         {originChildren.map((item, index) => (
                             <div key={`origin_${index}`} className={'mb-2'}>
-                                {item}
+                                {item.value} <a target={'_blank'}
+                                                href={getSciCrunchUrl(item.key)}>
+                                <LinkOutlined/></a>
                             </div>
                         ))}
                     </span>
@@ -321,12 +331,14 @@ const buildReferences = (senotype) => {
         items.push(
             {
                 key: datasetChildren,
-                label: 'BMI',
+                label: 'Dataset',
                 children:
                     <span className={'flex'}>
                         {datasetChildren.map((item, index) => (
                             <div key={`dataset_${index}`} className={'mb-2'}>
-                                {item}
+                                {item.value} <a target={'_blank'}
+                                                href={`${process.env.NEXT_PUBLIC_PORTAL_URL}dataset?uuid=${item.key}`}>
+                                <LinkOutlined/></a>
                             </div>
                         ))}
                     </span>
@@ -431,7 +443,7 @@ export default function ViewSenotype({senotype}) {
     return (
         <>
             <AppAccordion title={'Summary'}>
-                <Descriptions items={buildSummary(senotype)}/>
+                <Descriptions items={buildSummary(senotype)} column={2}/>
             </AppAccordion>
 
             <AppAccordion title={'Senotype'}>
