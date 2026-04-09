@@ -1,16 +1,31 @@
+import {useRef, useState} from 'react'
 import { Tooltip } from 'antd';
-import { CopyOutlined } from '@ant-design/icons';
 
-function ClipboardCopy({children, text, title = 'Copy SenNet ID to clipboard', className = '', size= 12}) {
+function ClipboardCopy({children, text, title = 'Copy SenNet ID to clipboard', className = '', size= 12, timeout = 1000}) {
+
+    const [open, setOpen] = useState(false);
+    const timerRef = useRef(null);
+
+    const handleOpenChange = (newOpen) => {
+        setOpen(newOpen);
+
+        if (newOpen) {
+        if (timerRef.current) clearTimeout(timerRef.current);
+
+        timerRef.current = setTimeout(() => {
+            setOpen(false);
+        }, timeout); 
+        }
+    };
 
     const copyToClipboard = () => {
         navigator.clipboard.writeText(text)
     }
 
     return (
-      <Tooltip placement="top" trigger="click" title={'Copied!'} className={`${className} popover-clipboard`}>
-            <sup title={title.replace('{text}', text)} role={'button'} onClick={copyToClipboard}>
-                {!children && <CopyOutlined />}
+      <Tooltip open={open} onOpenChange={handleOpenChange} placement="top" trigger="click" title={'Copied!'} className={`${className} popover-clipboard`}>
+            <sup title={title.replace('{text}', text)} role={'button'} onClick={copyToClipboard}>&nbsp;
+                {!children && <i className="bi bi-clipboard" style={{fontSize:size}}></i>}
                 {children}
             </sup>
       </Tooltip>

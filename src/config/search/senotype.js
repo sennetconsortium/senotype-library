@@ -3,7 +3,6 @@ import SEARCH from '@/lib/search';
 import URLS from '@/lib/urls';
 import ENVS from '@/lib/envs';
 import AUTH from '@/lib/auth';
-import { parseOntologyTerm } from '@/lib/general';
 
 const { doesAggregationHaveBuckets, bucketsTransform, submitterTransform, organBucketsTransform } = SEARCH
 const connector = new SearchAPIConnector({
@@ -208,6 +207,8 @@ export const SEARCH_SENOTYPE = {
         ],
         conditionalFacets: {},
         search_fields: {
+            'senotype.id^4': {type: 'value'},
+            'senotype.name^4': {type: 'value'},
             all_text: { type: 'value' },
         },
         source_fields: [

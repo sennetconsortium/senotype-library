@@ -3,10 +3,13 @@ import { Table } from 'antd';
 import { useSearchUIContext } from "search-ui/components/core/SearchUIContext";
 import ClipboardCopy from '../ClipboardCopy';
 import ModalOverComponent from '../ModalOverComponent';
+import SearchResultsMeta from './SearchResultsMeta';
+import log from 'xac-loglevel'
 
 function SearchResults() {
   const [tableData, setTableData] = useState([])
-  const { wasSearched, filters, rawResponse } = useSearchUIContext()
+
+  const { wasSearched, filters, setPageNumber, rawResponse, pageSize, setPageSize } = useSearchUIContext()
 
   const columns = [
     {
@@ -14,7 +17,7 @@ function SearchResults() {
       dataIndex: 'senotype.id',
       key: 'senotype.id',
       width: 250,
-      render: (_, record) => <a href={`/senotype/${record.senotype.id}`}>{record.senotype.id}<ClipboardCopy text={record.senotype.id} title={'Copy SenNet ID {text} to clipboard'} /></a>,
+      render: (_, record) => <><a href={`/senotype/${record.senotype.id}`}>{record.senotype.id}</a><ClipboardCopy text={record.senotype.id} title={'Copy SenNet ID {text} to clipboard'} /></>,
     },
     {
       title: 'Title',
@@ -26,7 +29,7 @@ function SearchResults() {
           <ModalOverComponent modalContent={record.senotype.definition} tag="small" maxLength={100}>
             <small>{record.senotype.definition.substr(0, 100)}</small>
           </ModalOverComponent>
-          
+
         </div>
       },
     },
@@ -38,17 +41,36 @@ function SearchResults() {
         const terms = record.assertions.map((a) => a.objects?.map((o) => o.term))
         const content = terms.join(', ')
         return <div><ModalOverComponent maxLength={100} modalContent={content}>
-            {content.substr(0, 100)}
-          </ModalOverComponent></div>
+          {content.substr(0, 100)}
+        </ModalOverComponent></div>
       },
     }
   ]
   useEffect(() => {
     setTableData(rawResponse?.records?.senotypes)
+    log.debug('SearchResults', rawResponse)
   }, [rawResponse])
+
+  const handleTableChange = (pagination, filters, sorter) => {
+    setPageNumber(pagination.current)
+    setPageSize(pagination.pageSize)
+  }
+
+  const getPageSizeOptions = () => {
+    // TODO make dynamic
+    return ['10', '20', '50']
+  }
+
   return (
     <div>
-      <Table columns={columns} dataSource={tableData} rowKey={'id'} />
+      <SearchResultsMeta />
+      <Table columns={columns} dataSource={tableData} rowKey={'id'} onChange={handleTableChange} pagination={{
+        total: rawResponse?.info?.senotypes?.total_result_count, 
+        pageSize: pageSize,
+        showSizeChanger: true, 
+        pageSizeOptions: getPageSizeOptions(),
+      }}
+      />
     </div>
   )
 }
