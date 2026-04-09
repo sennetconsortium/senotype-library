@@ -1,7 +1,6 @@
 import AppAccordion from "@/components/layout/AppAccordion";
 import React from "react";
 import {Descriptions, Table} from 'antd';
-import log from "xac-loglevel";
 
 const buildSummary = (senotype) => {
     return [
@@ -70,56 +69,51 @@ const buildSenotype = (senotype) => {
         .flatMap(item => item.objects)
         .map(obj => obj.term);
 
-    log.info(microenvironmentChildren.length)
     let keyCounter = 4
     let items = [
         {
             key: '1',
             label: 'Taxon',
-            children: <>
-                {taxonChildren.map((item, index) => (
-                    <>
-                        {item}
-                        {index < taxonChildren.length - 1 && <br/>}
-                    </>
-                ))}
-            </>
+            children: <span className={'flex'}>
+                        {taxonChildren.map((item, index) => (
+                            <div key={`taxon_${index}`} className={'mb-1'}>
+                                {item}
+                            </div>
+                        ))}
+                    </span>
         },
         {
             key: '2',
             label: 'Location',
-            children: <>
-                {locationChildren.map((item, index) => (
-                    <>
-                        {item}
-                        {index < locationChildren.length - 1 && <br/>}
-                    </>
-                ))}
-            </>
+            children: <span className={'flex'}>
+                        {locationChildren.map((item, index) => (
+                            <div key={`location_${index}`} className={'mb-1'}>
+                                {item}
+                            </div>
+                        ))}
+                    </span>
         },
         {
             key: '3',
             label: 'Celltype',
-            children: <>
-                {celltypeChildren.map((item, index) => (
-                    <>
-                        {item}
-                        {index < celltypeChildren.length - 1 && <br/>}
-                    </>
-                ))}
-            </>
+            children: <span className={'flex'}>
+                        {celltypeChildren.map((item, index) => (
+                            <div key={`celltype_${index}`} className={'mb-1'}>
+                                {item}
+                            </div>
+                        ))}
+                    </span>
         },
         {
             key: '4',
             label: 'Hallmark',
-            children: <>
-                {hallmarkChildren.map((item, index) => (
-                    <>
-                        {item}
-                        {index < hallmarkChildren.length - 1 && <br/>}
-                    </>
-                ))}
-            </>
+            children: <span className={'flex'}>
+                        {hallmarkChildren.map((item, index) => (
+                            <div key={`hallmark_${index}`} className={'mb-1'}>
+                                {item}
+                            </div>
+                        ))}
+                    </span>
         }
     ];
     if (microenvironmentChildren.length > 0) {
@@ -128,15 +122,13 @@ const buildSenotype = (senotype) => {
             {
                 key: keyCounter,
                 label: 'Microenvironment',
-                children:
-                    <>
+                children: <span className={'flex'}>
                         {microenvironmentChildren.map((item, index) => (
-                            <>
+                            <div key={`microenvironment_${index}`} className={'mb-1'}>
                                 {item}
-                                {index < microenvironmentChildren.length - 1 && <br/>}
-                            </>
+                            </div>
                         ))}
-                    </>
+                    </span>
             }
         )
     }
@@ -147,15 +139,13 @@ const buildSenotype = (senotype) => {
             {
                 key: keyCounter,
                 label: 'Inducer',
-                children:
-                    <>
+                children: <span className={'flex'}>
                         {inducerChildren.map((item, index) => (
-                            <>
+                            <div key={`inducer_${index}`} className={'mb-1'}>
                                 {item}
-                                {index < inducerChildren.length - 1 && <br/>}
-                            </>
+                            </div>
                         ))}
-                    </>
+                    </span>
             }
         )
     }
@@ -166,15 +156,13 @@ const buildSenotype = (senotype) => {
             {
                 key: keyCounter,
                 label: 'Assay',
-                children:
-                    <>
+                children: <span className={'flex'}>
                         {assayChildren.map((item, index) => (
-                            <>
+                            <div key={`assay_${index}`} className={'mb-1'}>
                                 {item}
-                                {index < assayChildren.length - 1 && <br/>}
-                            </>
+                            </div>
                         ))}
-                    </>
+                    </span>
             }
         )
     }
@@ -185,15 +173,13 @@ const buildSenotype = (senotype) => {
             {
                 key: keyCounter,
                 label: 'Diagnosis',
-                children:
-                    <>
+                children: <span className={'flex'}>
                         {diagnosisChildren.map((item, index) => (
-                            <>
+                            <div key={`diagnosis_${index}`} className={'mb-1'}>
                                 {item}
-                                {index < diagnosisChildren.length - 1 && <br/>}
-                            </>
+                            </div>
                         ))}
-                    </>
+                    </span>
             }
         )
     }
@@ -225,15 +211,14 @@ const buildDemographic = (senotype) => {
             {
                 key: keyCounter,
                 label: 'Sex',
-                children:
-                    <>
+                children: <span className={'flex'}>
                         {sexChildren.map((item, index) => (
-                            <>
+                            <div key={`sex_${index}`} className={'mb-1'}>
                                 {item}
-                                {index < sexChildren.length - 1 && <br/>}
-                            </>
+                            </div>
                         ))}
-                    </>
+                    </span>
+
             }
         )
     }
@@ -244,15 +229,13 @@ const buildDemographic = (senotype) => {
             {
                 key: ageChildren,
                 label: 'Age',
-                children:
-                    <>
+                children: <span className={'flex'}>
                         {ageChildren.map((item, index) => (
-                            <>
+                            <div key={`age_${index}`} className={'mb-1'}>
                                 {item}
-                                {index < ageChildren.length - 1 && <br/>}
-                            </>
+                            </div>
                         ))}
-                    </>
+                    </span>
             }
         )
     }
@@ -263,15 +246,13 @@ const buildDemographic = (senotype) => {
             {
                 key: bmiChildren,
                 label: 'BMI',
-                children:
-                    <>
+                children: <span className={'flex'}>
                         {bmiChildren.map((item, index) => (
-                            <>
+                            <div key={`bmi_${index}`} className={'mb-1'}>
                                 {item}
-                                {index < bmiChildren.length - 1 && <br/>}
-                            </>
+                            </div>
                         ))}
-                    </>
+                    </span>
             }
         )
     }
@@ -354,6 +335,16 @@ const buildReferences = (senotype) => {
     return items;
 }
 
+const buildMarkers = (senotype, key, markerType) => {
+    return senotype.assertions
+        .filter(item => item.predicate?.term === key)
+        .flatMap(item => item.objects)
+        .map(obj => markerType ? ({key: obj.code, marker: `${obj.code} (${obj.term})`, markerType: markerType}) : ({
+            key: obj.code,
+            marker: `${obj.code} (${obj.term})`
+        }));
+}
+
 export default function ViewSenotype({senotype}) {
     return (
         <>
@@ -378,7 +369,21 @@ export default function ViewSenotype({senotype}) {
             }
 
             <AppAccordion title={'Specified Markers'}>
-                <Table ></Table>
+                <Table columns={[{title: 'Specified Marker', dataIndex: 'marker', key: 'marker'}]}
+                       dataSource={buildMarkers(senotype, 'has_characterizing_marker_set')}></Table>
+            </AppAccordion>
+
+            <AppAccordion title={'Regulating Markers'}>
+                <Table columns={[{
+                    title: 'Regulating Marker',
+                    dataIndex: 'marker',
+                    key: 'marker'
+                }, {title: 'Marker Type', dataIndex: 'markerType', key: 'markerType'}]}
+                       dataSource={[
+                           ...buildMarkers(senotype, 'down_regulates', 'down'),
+                           ...buildMarkers(senotype, 'up_regulates', 'up'),
+                           ...buildMarkers(senotype, 'inconclusively_regulates', '?'),
+                       ]}></Table>
             </AppAccordion>
         </>
     )

@@ -23,8 +23,6 @@ export default function Page() {
                 {data &&
                     <>
                         <ViewSenotype senotype={data}/>
-
-                        <p>{JSON.stringify(data, null, 2)}</p>
                     </>
 
                 }
