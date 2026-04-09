@@ -8,7 +8,8 @@ import log from 'xac-loglevel'
 
 function SearchResults() {
   const [tableData, setTableData] = useState([])
-  const { wasSearched, filters, setPageNumber, rawResponse } = useSearchUIContext()
+
+  const { wasSearched, filters, setPageNumber, rawResponse, pageSize, setPageSize } = useSearchUIContext()
 
   const columns = [
     {
@@ -28,7 +29,7 @@ function SearchResults() {
           <ModalOverComponent modalContent={record.senotype.definition} tag="small" maxLength={100}>
             <small>{record.senotype.definition.substr(0, 100)}</small>
           </ModalOverComponent>
-          
+
         </div>
       },
     },
@@ -40,8 +41,8 @@ function SearchResults() {
         const terms = record.assertions.map((a) => a.objects?.map((o) => o.term))
         const content = terms.join(', ')
         return <div><ModalOverComponent maxLength={100} modalContent={content}>
-            {content.substr(0, 100)}
-          </ModalOverComponent></div>
+          {content.substr(0, 100)}
+        </ModalOverComponent></div>
       },
     }
   ]
@@ -52,12 +53,23 @@ function SearchResults() {
 
   const handleTableChange = (pagination, filters, sorter) => {
     setPageNumber(pagination.current)
+    setPageSize(pagination.pageSize)
+  }
+
+  const getPageSizeOptions = () => {
+    return ['10', '20', '50']
   }
 
   return (
     <div>
       <SearchResultsMeta />
-      <Table columns={columns} dataSource={tableData} rowKey={'id'} onChange={handleTableChange} />
+      <Table columns={columns} dataSource={tableData} rowKey={'id'} onChange={handleTableChange} pagination={{
+        total: rawResponse?.info?.senotypes?.total_result_count, 
+        pageSize: pageSize,
+        showSizeChanger: true, 
+        pageSizeOptions: getPageSizeOptions(),
+      }}
+      />
     </div>
   )
 }
