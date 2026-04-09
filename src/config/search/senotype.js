@@ -4,6 +4,13 @@ import URLS from '@/lib/urls';
 import ENVS from '@/lib/envs';
 import AUTH from '@/lib/auth';
 
+export const assertionPredicates = [
+    {k: 'source_type', name: 'Taxon', v: 'in_taxon'},
+    {k: 'organ', v: 'located_in'},
+    {k: 'cell_type', v: 'has_cell_type'},
+    {k: 'dataset_type', v: 'has_assay'},
+]
+
 const { doesAggregationHaveBuckets, bucketsTransform, submitterTransform, organBucketsTransform } = SEARCH
 const connector = new SearchAPIConnector({
     indexName: ENVS.index.senotype,
@@ -35,14 +42,8 @@ const connector = new SearchAPIConnector({
         }
         
         const aggs = queryOptions.aggs || {};
-        const nestedAggs = [
-            {k: 'source_type', v: 'in_taxon'},
-            {k: 'organ', v: 'located_in'},
-            {k: 'cell_type', v: 'has_cell_type'},
-            {k: 'dataset_type', v: 'has_assay'},
-            
-        ]
-        for (const x of nestedAggs) {
+       
+        for (const x of assertionPredicates) {
             aggs[x.k] = {
                     nested: {
                         path: "assertions"

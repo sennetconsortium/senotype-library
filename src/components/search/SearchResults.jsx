@@ -1,10 +1,16 @@
 import React, { useEffect, useState } from 'react'
-import { Table } from 'antd';
+import { Button, Table } from 'antd';
 import { useSearchUIContext } from "search-ui/components/core/SearchUIContext";
 import ClipboardCopy from '../ClipboardCopy';
 import ModalOverComponent from '../ModalOverComponent';
 import SearchResultsMeta from './SearchResultsMeta';
 import log from 'xac-loglevel'
+import { assertionPredicates } from '@/config/search/senotype';
+import '@/lib/general'
+import { Tag } from 'antd';
+import { ontology } from '@/cache/ontology';
+import Icon from '@ant-design/icons';
+import URLS from '@/lib/urls';
 
 function SearchResults() {
   const [tableData, setTableData] = useState([])
@@ -32,20 +38,74 @@ function SearchResults() {
 
         </div>
       },
-    },
-    {
-      title: 'Assertions',
-      dataIndex: 'assertions.objects.term',
-      key: 'assertions.objects.term',
-      render: (_, record) => {
-        const terms = record.assertions.map((a) => a.objects?.map((o) => o.term))
-        const content = terms.join(', ')
-        return <div><ModalOverComponent maxLength={100} modalContent={content}>
-          {content.substr(0, 100)}
-        </ModalOverComponent></div>
-      },
     }
   ]
+
+  const organIconRender = (terms) => {
+    let organs = new Set()
+    for (const o of terms) {
+      organs.add(ontology.organ_types.hierarchy[o])
+    }
+    organs = Array.from(organs)
+    const list = []
+    
+    let OrganIcon
+    for (const o of organs) {
+      if (o) {
+        OrganIcon = () => <img height={16} width={16} src={URLS.organIcon(o)} />
+        list.push(<a key={o} href={`https://data.sennetconsortium.org/organs/${o?.toLowerCase()}`}><Button icon={<Icon component={OrganIcon} />} iconPlacement='end'>{o}</Button></a>)
+      }
+    }
+    return <div>{list}</div>
+  }
+
+  const cellTypesRender = (filtered) => {
+    const list = []
+    for (const i of filtered) {
+      for (const c of i.objects) {
+        list.push(<span key={c.code}><a href="x" className='text-secondary'>{c.term}</a>, </span>)
+      }
+    }
+
+    return <div>{list}</div>
+
+  }
+  const getColumns = () => {
+    const assertionsWithIndividualColumns = assertionPredicates.map((a) => a.v)
+    const allAssertions = Array.from(assertionPredicates)
+    allAssertions.push({
+      name: 'Other Assertions',
+      k: 'other',
+      v: ''
+    })
+    for (const p of allAssertions) {
+      columns.push(
+        {
+          title: p.name || (p.k.replaceAll('_', ' ').titleCase()),
+          dataIndex: `assertions.predicate.term.${p.k}`,
+          key: `assertions.predicate.term.${p.k}`,
+          
+          render: (_, record) => {
+            const filtered = p.k === 'other' ? record.assertions.filter((r) => assertionsWithIndividualColumns.indexOf(r.predicate.term) === -1) : record.assertions.filter((r) => r.predicate.term === p.v)
+            const terms = filtered.map((a) => a.objects?.map((o) => o.term))
+          
+            if (p.k === 'organ') {
+              return organIconRender(terms)
+            } if (p.k === 'cell_type') {
+              return cellTypesRender(filtered)
+            } else {
+              const content = terms.join(', ')
+              return <div><ModalOverComponent maxLength={100} modalContent={content}>
+                <p style={{wordBreak: 'break-all'}}>{content.substr(0, 100)}</p>
+              </ModalOverComponent></div>
+            }
+            
+          },
+        }
+      )
+    }
+    return columns
+  }
   useEffect(() => {
     setTableData(rawResponse?.records?.senotypes)
     log.debug('SearchResults', rawResponse)
@@ -77,11 +137,11 @@ function SearchResults() {
   return (
     <div>
       <SearchResultsMeta />
-      <Table columns={columns} dataSource={tableData} rowKey={'id'} onChange={handleTableChange} pagination={{
+      <Table columns={getColumns()} dataSource={tableData} rowKey={'id'} onChange={handleTableChange} pagination={{
         total: rawResponse?.info?.senotypes?.total_result_count, 
         pageSize: pageSize,
         showSizeChanger: pageSizeOptions.length > 0, 
-        pageSizeOptions,
+        pageSizeOptions
       }}
       />
     </div>

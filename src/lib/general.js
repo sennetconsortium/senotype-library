@@ -8,6 +8,12 @@ Object.assign(String.prototype, {
         return b.toLowerCase();
       });
   },
+  titleCase() {
+      return this.replace(
+          /\w\S*/g,
+          text => text.charAt(0).toUpperCase() + text.substring(1).toLowerCase()
+      )
+  },
   toDashedCase() {
     return this
       .replace(/[^a-zA-Z0-9]+/g, '-')

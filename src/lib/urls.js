@@ -14,6 +14,16 @@ const URLS = {
     search: process.env.NEXT_PUBLIC_SEARCH_API_BASE,
     ontology: process.env.NEXT_PUBLIC_ONTOLOGY_API_BASE,
   },
+  organIcon: (o) => {
+    let imgName = o.toLowerCase()
+    if (imgName === 'lung') {
+      imgName = 'lungs'
+    }
+    if (imgName === 'bone') {
+      imgName = 'bone-marrow'
+    }
+    return `${process.env.NEXT_PUBLIC_ORGAN_ICON_PREFIX}${imgName}.svg`
+  }
 
 }
 
