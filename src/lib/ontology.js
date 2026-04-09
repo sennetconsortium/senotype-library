@@ -7,6 +7,7 @@ import { flipObj } from './general'
 
 const ONTOLOGY_CACHE_PATH = path.join(process.cwd(), 'src/cache')
 const IMPORT_PATH = './../cache/ontology.js'
+const delay = (ms) => new Promise(res => setTimeout(res, ms));
 
 const ONTOLOGY = {
   fetch: async (codes, code) => {
@@ -60,9 +61,9 @@ const ONTOLOGY = {
   },
   createImport: async () => {
     const filePath = ONTOLOGY_CACHE_PATH + '/ontology.js';
-    const delay = (ms) => new Promise(res => setTimeout(res, ms));
+    
     try {
-      log.info('Ontology.buildCache', 'Creating ...', filePath)
+      log.info('Ontology.createImport', 'Creating ...', filePath)
       const results = await ONTOLOGY.fetchAll();
       let ontologyResults = {}
       let structuredData = {}
@@ -80,15 +81,16 @@ const ONTOLOGY = {
       await delay(500);
       return await import(`${IMPORT_PATH}?update=${Date.now()}`)
     } catch (e) {
-      log.error('Error.Ontology.buildCache.catch', e)
+      log.error('Error.Ontology.createImport.catch', e)
     }
   },
   getImport: async () => {
     
     try {
-      log.info('Ontology.buildCache', '...')
+      log.info('Ontology.getImport', '...')
       const module = await import(IMPORT_PATH)
-      log.info('Ontology.buildCache', '...', module.ontology)
+      await delay(500);
+      log.info('Ontology.getImport', '...', module.ontology)
       //ontology = await fs.readFile(filePath, 'utf8')
       if (!module || !Object.values(module.ontology).length) {
         return await ONTOLOGY.createImport()
@@ -96,7 +98,7 @@ const ONTOLOGY = {
       return null
 
     } catch (e) {
-      log.error('Error.Ontology.buildCache', e)
+      log.error('Error.Ontology.getImport', e)
       return await ONTOLOGY.createImport()
     }
     
