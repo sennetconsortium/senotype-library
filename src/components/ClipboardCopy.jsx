@@ -1,5 +1,4 @@
 import { Tooltip } from 'antd';
-import { CopyOutlined } from '@ant-design/icons';
 
 function ClipboardCopy({children, text, title = 'Copy SenNet ID to clipboard', className = '', size= 12}) {
 
@@ -9,8 +8,8 @@ function ClipboardCopy({children, text, title = 'Copy SenNet ID to clipboard', c
 
     return (
       <Tooltip placement="top" trigger="click" title={'Copied!'} className={`${className} popover-clipboard`}>
-            <sup title={title.replace('{text}', text)} role={'button'} onClick={copyToClipboard}>
-                {!children && <CopyOutlined />}
+            <sup title={title.replace('{text}', text)} role={'button'} onClick={copyToClipboard}>&nbsp;
+                {!children && <i className="bi bi-clipboard" style={{fontSize:size}}></i>}
                 {children}
             </sup>
       </Tooltip>
