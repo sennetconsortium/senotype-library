@@ -1,6 +1,16 @@
 import AUTH from "./auth"
 
 const SEARCH = {
+  submitterBucketsTransform: (ops) => {
+    const {aggregations, field} = ops
+    const results = []
+    let name
+    for (const a of aggregations[field].buckets) {
+      let name = a.meta.hits.hits[0]._source.submitter.name
+      results.push({...a, email: a.key, key: `${name.first} ${name.last}`})
+    }
+    return results
+  },
   bucketsTransform: (ops) => {
     const {aggregations, field} = ops
   

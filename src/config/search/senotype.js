@@ -4,7 +4,7 @@ import URLS from '@/lib/urls';
 import ENVS from '@/lib/envs';
 import AUTH from '@/lib/auth';
 
-const { doesAggregationHaveBuckets, bucketsTransform } = SEARCH
+const { doesAggregationHaveBuckets, bucketsTransform, submitterBucketsTransform } = SEARCH
 const connector = new SearchAPIConnector({
     indexName: ENVS.index.senotype,
     indexUrl: URLS.api.search,
@@ -74,6 +74,15 @@ const connector = new SearchAPIConnector({
                 }
 
             delete aggs.source_type.terms
+        }
+
+        aggs.submitter_name.aggs = {
+            meta: {
+                top_hits: {
+                    size: 1,
+                    _source: ["submitter.name"]
+                }
+            }
         }
 
         queryOptions.aggs = aggs;
@@ -166,6 +175,7 @@ export const SEARCH_SENOTYPE = {
                         isFilterable: false,
                         facetType: 'term',
                         isAggregationActive: true,
+                        bucketsTransform: submitterBucketsTransform,
                         isFacetVisible: doesAggregationHaveBuckets('submitter_name')
                     }
                 }
