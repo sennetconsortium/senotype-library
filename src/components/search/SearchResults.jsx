@@ -57,6 +57,7 @@ function SearchResults() {
   }
 
   const getPageSizeOptions = () => {
+    // TODO make dynamic
     return ['10', '20', '50']
   }
 
