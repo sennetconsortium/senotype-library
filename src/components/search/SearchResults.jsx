@@ -57,9 +57,22 @@ function SearchResults() {
   }
 
   const getPageSizeOptions = () => {
-    // TODO make dynamic
-    return ['10', '20', '50']
+    const total = rawResponse?.info?.senotypes?.total_result_count
+    let num = 0
+    const ops = []
+    for (let i = 1; i <= 10; i += 2) {
+      num = num + (i * 10)
+      if (num < total) {
+        ops.push(num)
+      }
+    }
+    if (20 < total) {
+      ops.splice(1, 0, 20)
+    }
+    return ops
   }
+
+  const pageSizeOptions = getPageSizeOptions()
 
   return (
     <div>
@@ -67,8 +80,8 @@ function SearchResults() {
       <Table columns={columns} dataSource={tableData} rowKey={'id'} onChange={handleTableChange} pagination={{
         total: rawResponse?.info?.senotypes?.total_result_count, 
         pageSize: pageSize,
-        showSizeChanger: true, 
-        pageSizeOptions: getPageSizeOptions(),
+        showSizeChanger: pageSizeOptions.length > 0, 
+        pageSizeOptions,
       }}
       />
     </div>
