@@ -42,7 +42,7 @@ const buildSenotype = (senotype) => {
     let celltypeChildren = senotype.assertions
         .filter(item => item.predicate?.term === "has_cell_type")
         .flatMap(item => item.objects)
-        .map(obj => obj.term);
+        .map(obj => `${obj.code} (${obj.term})`);
 
     return [
         {
