@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layout, Menu } from 'antd';
+import { Layout, Menu, Skeleton } from 'antd';
 import Facets from 'search-ui/components/core/Facets'
 import { useSearchUIContext } from "search-ui/components/core/SearchUIContext";
 const { Content, Sider } = Layout;
@@ -16,6 +16,9 @@ function SiderFacets({}) {
     <div className='c-SiderFacets'>
       <ClearFiltersButton />
       <Sider className='mt-4 mb-4 container--card bg-white' breakpoint="lg" collapsedWidth="0" width={'100%'}>
+        {!wasSearched && <>
+        {Array(5).fill(0).map((_, i) => (<Skeleton key={i} />))}
+        </>}
         {wasSearched && <Facets transformFunction={transformFunction} />}
       </Sider>
     </div>

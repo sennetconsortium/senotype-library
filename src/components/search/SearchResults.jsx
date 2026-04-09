@@ -45,7 +45,6 @@ function SearchResults() {
   ]
   useEffect(() => {
     setTableData(rawResponse?.records?.senotypes)
-    console.log('SEARCH', rawResponse)
   }, [rawResponse])
   return (
     <div>
