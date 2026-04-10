@@ -1,3 +1,5 @@
+import '@/lib/general'
+
 const URLS = {
   login: process.env.NEXT_PUBLIC_LOGIN_URL,
   edit: '/edit',
@@ -18,7 +20,7 @@ const URLS = {
   portal: process.env.NEXT_PUBLIC_PORTAL_URL,
   obo: process.env.NEXT_PUBLIC_OBO_BASE_URL,
   organIcon: (o) => {
-    let imgName = o.toLowerCase();
+    let imgName = o.toDashedCase();
     if (imgName === 'lung') {
       imgName = 'lungs';
     }
