@@ -2,7 +2,7 @@ import EditContext from '@/context/EditContext';
 import React, { useContext } from 'react';
 import SenotypeForm from './SenotypeForm';
 
-function Senotype({}) {
+function EditSenotype({}) {
   const { senotype } = useContext(EditContext);
   if (!senotype) {
     return <SenotypeForm />;
@@ -16,4 +16,4 @@ function Senotype({}) {
   );
 }
 
-export default Senotype;
+export default EditSenotype;
