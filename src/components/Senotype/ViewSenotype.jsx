@@ -2,10 +2,6 @@ import AppAccordion from '@/components/AppAccordion';
 import React, { useRef, useState } from 'react';
 import { LinkOutlined, SearchOutlined } from '@ant-design/icons';
 import { Button, Col, Descriptions, Input, Row, Space, Table } from 'antd';
-import {
-  getMarkerDetailsUrl,
-  getOboDetailsUrl,
-} from '@/lib/senotype';
 import ClipboardCopy from '@/components/ClipboardCopy';
 import AppAnchor from '@/components/AppAnchor';
 import URLS from '@/lib/urls';
@@ -86,7 +82,7 @@ const buildSenotype = (assertions) => {
               {item.value}{' '}
               <a
                 target={'_blank'}
-                href={getOboDetailsUrl(item.key.replace(':', '_'))}
+                href={URLS.getOboDetailsUrl(item.key.replace(':', '_'))}
               >
                 <LinkOutlined />
               </a>
@@ -105,7 +101,7 @@ const buildSenotype = (assertions) => {
               {item.key} ({item.value}){' '}
               <a
                 target={'_blank'}
-                href={getOboDetailsUrl(item.key.replace(':', '_'))}
+                href={URLS.getOboDetailsUrl(item.key.replace(':', '_'))}
               >
                 <LinkOutlined />
               </a>
@@ -191,7 +187,7 @@ const buildSenotype = (assertions) => {
               {item.value}{' '}
               <a
                 target={'_blank'}
-                href={getOboDetailsUrl(item.key.replace(':', '_'))}
+                href={URLS.getOboDetailsUrl(item.key.replace(':', '_'))}
               >
                 <LinkOutlined />
               </a>
@@ -413,7 +409,7 @@ export default function ViewSenotype({ senotype }) {
       render: (_, record) => (
         <span>
           {record[dataIndex]}{' '}
-          <a target={'_blank'} href={getMarkerDetailsUrl(record.key)}>
+          <a target={'_blank'} href={URLS.getMarkerDetailsUrl(record.key)}>
             <LinkOutlined />
           </a>{' '}
         </span>

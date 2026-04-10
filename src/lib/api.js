@@ -1,6 +1,8 @@
 import URLS from './urls';
 import log from 'xac-loglevel';
 import AUTH from './auth';
+import { simple_query_builder } from '@/search-ui/lib/search-tools';
+import ENVS from './envs';
 
 const API = {
   jsonHeader: (headers) => {
@@ -31,6 +33,30 @@ const API = {
   },
   search: async (body, index = 'entities') => {
     return await API.fetch({ url: `${URLS.api.search}${index}/search`, body });
+  },
+  fetchSenotype: async (senotypeId) => {
+    let data = {};
+
+    const body = simple_query_builder('senotype.id', senotypeId);
+
+    let jsonData = await API.search(body, ENVS.index.senotype);
+    if (jsonData.hasOwnProperty('error')) {
+      log.error(jsonData.error);
+      return data;
+    } else {
+      let total = jsonData['hits']['total']['value'];
+      if (total !== 0) {
+        let senotype; //result["hits"]["hits"][0]["_source"]
+        jsonData['hits']['hits'].forEach((hit) => {
+          if (hit['_source']['senotype']['id'] === senotypeId) {
+            senotype = hit['_source'];
+          }
+        });
+        if (senotype) {
+          return senotype;
+        }
+      }
+    }
   },
 };
 export default API;

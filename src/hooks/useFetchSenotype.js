@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { fetchSenotype } from '@/lib/senotype';
+import API from '@/lib/api';
 
 export function useSenotype(senotype_id, auth) {
   const [data, setData] = useState(null);
@@ -8,8 +8,8 @@ export function useSenotype(senotype_id, auth) {
 
   useEffect(() => {
     if (!senotype_id) return;
-
-    fetchSenotype(senotype_id)
+    
+    API.fetchSenotype(senotype_id)
       .then(setData)
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
