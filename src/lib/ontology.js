@@ -6,8 +6,6 @@ import URLS from './urls';
 import { flipObj } from './general';
 
 const ONTOLOGY_CACHE_PATH = path.join(process.cwd(), 'src/cache');
-const IMPORT_PATH = './../cache/ontology.js';
-const delay = (ms) => new Promise((res) => setTimeout(res, ms));
 const exportString = 'export const ontology=';
 const filePath = ONTOLOGY_CACHE_PATH + '/ontology.js';
 

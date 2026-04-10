@@ -80,26 +80,14 @@ const buildSenotype = (assertions) => {
         <span className={'flex'}>
           {locationChildren.map((item, index) => (
             <div key={`location_${index}`} className={'mb-1'}>
+              {item.value}&nbsp;
+              <img src={URLS.organIcon(item.value)} className='w-fixed' width={16} height={16} alt={item.value} /> &nbsp;
               <a
-                key={item.key}
-                href={`${URLS.portal}organs/${ONTOLOGY_CACHE.organ_types.hierarchy[item.value]?.toLowerCase()}`}
+                aria-label={`Outgoing link to ontology for ${item.value}`}
+                target={'_blank'}
+                href={URLS.getOboDetailsUrl(item.key.replace(':', '_'))}
               >
-                <Button
-                  icon={
-                    <Icon
-                      component={() => (
-                        <img
-                          height={16}
-                          width={16}
-                          src={URLS.organIcon(item.value)}
-                        />
-                      )}
-                    />
-                  }
-                  iconPlacement="end"
-                >
-                  {item.value}
-                </Button>
+                <LinkOutlined />
               </a>
             </div>
           ))}
