@@ -1,10 +1,11 @@
 import AppAccordion from '@/components/AppAccordion';
-import React, { useRef, useState } from 'react';
-import { LinkOutlined, SearchOutlined } from '@ant-design/icons';
+import React, { useEffect, useRef, useState } from 'react';
+import Icon, { LinkOutlined, SearchOutlined } from '@ant-design/icons';
 import { Button, Col, Descriptions, Input, Row, Space, Table } from 'antd';
 import ClipboardCopy from '@/components/ClipboardCopy';
 import AppAnchor from '@/components/AppAnchor';
 import URLS from '@/lib/urls';
+import { useFetchUBKG } from '@/hooks/useFetchUBKG';
 
 const buildAssertionChildren = (assertions, term) => {
   return assertions
@@ -371,6 +372,42 @@ export default function ViewSenotype({ senotype }) {
   const [sortedInfo, setSortedInfo] = useState({});
   const searchInput = useRef(null);
 
+  const { data, error, fetchUBKG } = useFetchUBKG();
+  const [markerMap, setMarkerMap] = useState({});
+
+  useEffect(() => {
+    if (!senotype?.assertions) return;
+
+    const termKeys = [
+      'has_characterizing_marker_set',
+      'down_regulates',
+      'up_regulates',
+      'inconclusively_regulates',
+    ];
+
+    const codesToFetch = new Set();
+
+    termKeys.forEach((key) => {
+      senotype.assertions
+        .filter((item) => item.predicate?.term === key)
+        .flatMap((item) => item.objects)
+        .forEach((obj) => {
+          if (obj.code && !markerMap[obj.code]) {
+            codesToFetch.add(obj.code);
+          }
+        });
+    });
+
+    codesToFetch.forEach((code) => {
+      fetchUBKG(code).then((result) => {
+        setMarkerMap((prev) => ({
+          ...prev,
+          [code]: result,
+        }));
+      });
+    });
+  }, [senotype, fetchUBKG, markerMap]);
+
   const handleChange = (pagination, filters, sorter) => {
     setSortedInfo(sorter);
   };
@@ -391,12 +428,12 @@ export default function ViewSenotype({ senotype }) {
         markerType
           ? {
               key: obj.code,
-              [dataIndex]: `${obj.code} (${obj.term})`,
+              [dataIndex]: `${markerMap[obj.code] ?? 'loading...'} (${obj.code})`,
               markerType: markerType,
             }
           : {
               key: obj.code,
-              [dataIndex]: `${obj.code} (${obj.term})`,
+              [dataIndex]: `${markerMap[obj.code] ?? 'loading...'} (${obj.code})`,
             },
       );
   };
