@@ -9,6 +9,9 @@ import { assertionPredicates } from '@/config/search/senotype';
 import { ontology } from '@/cache/ontology';
 import Icon from '@ant-design/icons';
 import URLS from '@/lib/urls';
+import { Row, Col, Container } from 'react-bootstrap';
+import PageSizer from './PageSizer';
+import ResultsExport from './ResultsExport';
 
 function SearchResults() {
   const [tableData, setTableData] = useState([]);
@@ -202,8 +205,19 @@ function SearchResults() {
   const pageSizeOptions = getPageSizeOptions();
 
   return (
-    <div>
-      <SearchResultsMeta />
+    <div className='c-searchResults'>
+      <div className='c-searchResults__headerTools mb-3'>
+        <Row>
+          <Col>
+            <SearchResultsMeta />
+          </Col>
+          <Col className='d-flex flex-row-reverse'>
+  
+            <PageSizer options={pageSizeOptions.map((x) => ({label: `${x} / page`, value: x}))} />
+            <ResultsExport />
+          </Col>
+        </Row>
+      </div>
       <Table
         columns={getColumns()}
         dataSource={tableData}

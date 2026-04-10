@@ -1,4 +1,3 @@
-import React from 'react';
 import { useSearchUIContext } from 'search-ui/components/core/SearchUIContext';
 
 function SearchResultsMeta() {
@@ -24,7 +23,7 @@ function SearchResultsMeta() {
     );
   };
 
-  return <div className="mt-2 mb-2">{renderText()}</div>;
+  return <div className="c-searchResults__meta">{renderText()}</div>;
 }
 
 export default SearchResultsMeta;
