@@ -47,7 +47,6 @@ export async function fetchSenotype(senotype_id, auth = null) {
         log.error(jsonData.error)
         return data
     } else {
-        log.info("Response", jsonData)
         let total = jsonData["hits"]["total"]["value"]
         if (total !== 0) {
             let senotype //result["hits"]["hits"][0]["_source"]
