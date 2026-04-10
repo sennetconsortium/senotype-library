@@ -15,7 +15,7 @@ function SiderFacets({}) {
   return (
     <div className='c-SiderFacets'>
       <ClearFiltersButton />
-      <Sider className='mt-4 mb-4 container--card bg-white' breakpoint="lg" collapsedWidth="0" width={'100%'}>
+      <Sider className='mt-4 mb-4 container--card bg-white' width={'100%'}>
         {!wasSearched && <>
         {Array(5).fill(0).map((_, i) => (<Skeleton key={i} />))}
         </>}

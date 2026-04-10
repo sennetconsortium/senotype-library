@@ -1,6 +1,6 @@
 import React, {useState} from "react";
-import {Anchor, FloatButton} from "antd";
-import {LeftCircleOutlined, RightCircleOutlined} from "@ant-design/icons";
+import {Anchor} from "antd";
+import AppFloatingButton from "../AppFloatingButton";
 
 
 const AppAnchor = ({
@@ -18,11 +18,8 @@ const AppAnchor = ({
 
     return (
         <>
-            <FloatButton onClick={() => toggleVisibility()} style={anchorButtonStyle}
-                         tooltip={anchorVisible ? <div>Hide Sidebar</div> : <div>Show Sidebar</div>}
-                         icon={anchorVisible ? <LeftCircleOutlined/> : <RightCircleOutlined/>}
-            />
-
+            <AppFloatingButton show={anchorVisible} onClick={toggleVisibility} text={'Sidebar'} buttonStyle={anchorButtonStyle} />
+        
             {anchorVisible &&
                 <Anchor offsetTop={offsetTop} items={items}/>
             }
