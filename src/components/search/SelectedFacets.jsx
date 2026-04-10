@@ -127,7 +127,7 @@ function SelectedFacets() {
   };
 
   return (
-    <div className={`c-SelectedFacets mb-3`}>
+    <div className={`c-selectedFacets mb-3`}>
       {filters.reduce((acc, filter) => {
         const facet = findFacet(filter.field);
         if (facet?.facetChipType) {
