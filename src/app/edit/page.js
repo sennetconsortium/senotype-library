@@ -1,6 +1,6 @@
 'use client';
 import BasicLayout from '@/components/layout/BasicLayout';
-import Senotype from '@/components/Senotype/Senotype';
+import Senotype from '@/components/Senotype/EditSenotype';
 import { EditProvider } from '@/context/EditContext';
 
 function page() {
