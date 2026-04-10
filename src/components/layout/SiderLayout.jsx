@@ -9,7 +9,7 @@ import SiderFacets from '../search/SiderFacets';
 const SiderLayout = ({ children, prefixChildren, sider }) => {
 
   return (
-    <div className='bg--dirtyWhite'>
+    <div className='body__wrapper bg--dirtyWhite'>
       <AppNavBar />
       <Container fluid >
         <Row>

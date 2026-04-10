@@ -1,9 +1,9 @@
 import React from 'react'
-import { Spinner } from 'react-bootstrap'
+import {Spin} from "antd";
 
 function AppSpinner() {
   return (
-    <div className='text-center'><Spinner variant='primary' /></div>
+    <Spin percent={"auto"} fullscreen></Spin>
   )
 }
 

@@ -6,6 +6,7 @@ import NavDropdown from 'react-bootstrap/NavDropdown';
 import Image from "next/image";
 import ENVS from '@/lib/envs';
 import AppContext from '@/context/AppContext';
+import ClipboardCopy from '../ClipboardCopy';
 
 function AppNavBar() {
   const {auth} = useContext(AppContext)
@@ -30,7 +31,9 @@ function AppNavBar() {
           <Nav>
             {/* <Nav.Link href="#home">Home</Nav.Link> */}
             <NavDropdown title={auth.name} id="basic-nav-dropdown">
-              <NavDropdown.Item href="#action/3.3">Copy Globus Token</NavDropdown.Item>
+              <NavDropdown.Item href="#"><ClipboardCopy tag='span' text={auth.groups_token}>
+                Copy Globus Token
+                </ClipboardCopy></NavDropdown.Item>
               <NavDropdown.Divider />
               <NavDropdown.Item href="/logout">
                 Log out

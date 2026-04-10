@@ -1,4 +1,5 @@
 
+import { deleteCookie } from 'cookies-next';
 import { getCookie } from 'cookies-next';
 import log from 'xac-loglevel'
 
@@ -15,7 +16,11 @@ const AUTH = {
     }
     return {}
   }, 
-  token: () => AUTH.info().groups_token
+  token: () => AUTH.info().groups_token,
+  logout: () => {
+    deleteCookie('info')
+    sessionStorage.clear()
+  }
 }
 
 export default AUTH
