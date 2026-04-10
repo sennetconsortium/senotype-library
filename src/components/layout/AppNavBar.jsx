@@ -25,13 +25,13 @@ function AppNavBar() {
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
 
-        {!auth.name && (
+        {!auth.isAuthenticated && (
           <Nav>
             <Nav.Link href="/">Login</Nav.Link>
           </Nav>
         )}
 
-        {auth.name && (
+        {auth.name && auth.isAuthenticated && (
           <Navbar.Collapse
             id="basic-navbar-nav"
             className="justify-content-end"

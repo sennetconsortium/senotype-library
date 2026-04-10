@@ -17,10 +17,11 @@ export const AppProvider = ({ children }) => {
       url: URLS.api.ingest.privs.groups,
       ...ops,
     });
+    const isAuthenticated = groups?.user_write_groups !== undefined;
     setAuth({
       ...info,
-      isAuthenticated: admin !== null,
-      isAuthorized: admin !== null,
+      isAuthenticated,
+      isAuthorized: isAuthenticated,
       isAdmin: admin?.has_data_admin_privs,
       userGroups: groups?.user_write_groups,
     });
