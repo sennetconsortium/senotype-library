@@ -9,6 +9,7 @@ import SearchInputField from '@/components/search/SearchInputField';
 import { FloatButton } from 'antd';
 import { LeftCircleOutlined, RightCircleOutlined } from '@ant-design/icons';
 import AppFloatingButton from '@/components/AppFloatingButton';
+import SelectedFacets from '@/components/search/SelectedFacets';
 
 const SearchUIContainer = dynamic(
   () => import('@/search-ui/components/core/SearchUIContainer'),
@@ -29,6 +30,7 @@ function Page() {
         prefixChildren={
           <>
             <SearchInputField />
+            <SelectedFacets />
           </>
         }
       >

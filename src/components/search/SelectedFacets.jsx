@@ -1,6 +1,6 @@
-import { Chip } from '@mui/material';
 import { useSearchUIContext } from 'search-ui/components/core/SearchUIContext';
 import { parseOntologyTerm } from '@/lib/general';
+import { Tag } from 'antd';
 
 function SelectedFacets() {
   const { facetConfig, filters, setFilter, removeFilter, findFacet } =
@@ -37,7 +37,7 @@ function SelectedFacets() {
         if (!facet.transformFunction) {
           return parseOntologyTerm(value);
         }
-        return facet.transformFunction(value);
+        return facet.transformFunction(value, facet);
     }
   };
 
@@ -66,21 +66,21 @@ function SelectedFacets() {
       if (!value[key]) return;
 
       chips.push(
-        <Chip
+        <Tag
           key={`${filter.field}_${key}`}
           className={`${getSelector('chipToggle', filter.field, key)}`}
-          label={
-            <>
-              {' '}
-              <span className="chip-title">
-                {convertToDisplayLabel(facet, key)}
-              </span>
-              : {convertToDisplayValue(facet, value[key])}
-            </>
-          }
           variant="outlined"
-          onDelete={(e) => handleDelete(e, filter, facet, value, key)}
-        />,
+          closable
+          onClose={(e) => handleDelete(e, filter, facet, value, key)}
+        >
+          <>
+            {' '}
+            <span className="chip-title">
+              {convertToDisplayLabel(facet, key)}
+            </span>
+            : {convertToDisplayValue(facet, value[key])}
+          </>{' '}
+        </Tag>,
       );
     });
     return chips;
@@ -88,20 +88,20 @@ function SelectedFacets() {
 
   const buildValueFacetChip = (filter, facet, value) => {
     return (
-      <Chip
+      <Tag
         key={`${filter.field}_${formatVal(value)}`}
         className={`${getSelector('chipToggle', filter.field, value)}`}
-        label={
-          <>
-            {' '}
-            <span className="chip-title">
-              {convertToDisplayLabel(facet)}
-            </span>: {convertToDisplayValue(facet, value)}
-          </>
-        }
         variant="outlined"
-        onDelete={(e) => handleDelete(e, filter, facet, value)}
-      />
+        closable
+        onClose={(e) => handleDelete(e, filter, facet, value)}
+      >
+        <>
+          {' '}
+          <span className="chip-title">
+            {convertToDisplayLabel(facet)}
+          </span>: {convertToDisplayValue(facet, value)}
+        </>{' '}
+      </Tag>
     );
   };
 
@@ -109,24 +109,25 @@ function SelectedFacets() {
     const field = filter.field;
     const value = filter.values.join(', ');
     return (
-      <Chip
+      <Tag
         key={`${field}_${formatVal(value)}`}
         className={`${getSelector('chipToggle', field, value)} sui-chipToggle--static`}
-        label={
-          <>
-            {' '}
-            <span className="chip-title">{field}</span>:{' '}
-            <span className="chip-value">{value}</span>
-          </>
-        }
         variant="outlined"
-        onDelete={(e) => filter.values.map((v) => removeFilter(field, v))}
-      />
+        closable
+        onClose={(e) => filter.values.map((v) => removeFilter(field, v))}
+      >
+        {' '}
+        <>
+          {' '}
+          <span className="chip-title">{field}</span>:{' '}
+          <span className="chip-value">{value}</span>
+        </>{' '}
+      </Tag>
     );
   };
 
   return (
-    <div className={`c-SelectedFacets`}>
+    <div className={`c-SelectedFacets mb-3`}>
       {filters.reduce((acc, filter) => {
         const facet = findFacet(filter.field);
         if (facet?.facetChipType) {

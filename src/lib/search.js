@@ -10,7 +10,7 @@ const SEARCH = {
     } catch (e) {
       log.error('SEARCH.submitterTransform', value, facet);
     }
-    return <span title={value}>{`${name.first} ${name.last}`}</span>;
+    return <span title={value}>{`${name?.first} ${name?.last}`}</span>;
   },
   organBucketsTransform: (ops) => {
     const { aggregations, field, component } = ops;
