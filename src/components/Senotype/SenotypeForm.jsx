@@ -1,7 +1,7 @@
 import EditContext from '@/context/EditContext';
 import React, {useState, useContext, useEffect} from 'react'
 import { Tab, Tabs } from 'react-bootstrap';
-import AppAccordion from '../layout/AppAccordion';
+import AppAccordion from '../AppAccordion';
 import InputField from '../form/InputField';
 
 function SenotypeForm() {
