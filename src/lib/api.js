@@ -11,7 +11,7 @@ const API = {
     return headers;
   },
   fetch: async ({ url, token, body, method = 'POST' }) => {
-    token = token === undefined ? AUTH.token() : null;
+    token = token === undefined ? AUTH.token() : token;
     const headers = API.jsonHeader();
     if (token) {
       headers.append('Authorization', `Bearer ${token}`);
