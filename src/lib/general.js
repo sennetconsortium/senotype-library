@@ -46,3 +46,14 @@ export const parseOntologyTerm = (val) => {
     }
   }
 };
+
+export function autoBlobDownloader(data, type, filename) {
+  const a = document.createElement('a');
+  const url = window.URL.createObjectURL(new Blob(data, { type }));
+  a.href = url;
+  a.download = filename;
+  document.body.append(a);
+  a.click();
+  a.remove();
+  window.URL.revokeObjectURL(url);
+};
