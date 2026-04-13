@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Anchor } from 'antd';
 import AppFloatingButton from './AppFloatingButton';
+import THEME from '@/lib/theme';
 
 const AppAnchor = ({
   items,
@@ -10,13 +11,25 @@ const AppAnchor = ({
   anchorButtonStyle = { top: 350, left: 10, right: 'auto', bottom: 'auto' },
 }) => {
   const [anchorVisible, setAnchorVisible] = useState(true);
+  const [affix, setAffix] = useState(true)
+
   const toggleVisibility = () => {
     setAnchorVisible(!anchorVisible);
-    setSpan(span === 20 ? 24 : 20);
+    setSpan(span === 10 ? 12 : 10);
   };
 
+  const updatePosition = () => {
+    setAffix(THEME.isLgScreen())
+  }
+
+  useEffect(() => {
+      updatePosition()
+      window.addEventListener('resize', updatePosition);
+      return () => window.removeEventListener('resize', updatePosition);
+  }, [])
+
   return (
-    <>
+    <div className={`c-anchor mb-4`}>
       <AppFloatingButton
         show={anchorVisible}
         onClick={toggleVisibility}
@@ -24,8 +37,8 @@ const AppAnchor = ({
         buttonStyle={anchorButtonStyle}
       />
 
-      {anchorVisible && <Anchor offsetTop={offsetTop} items={items} />}
-    </>
+      {anchorVisible && <Anchor affix={affix} offsetTop={offsetTop} items={items} />}
+    </div>
   );
 };
 

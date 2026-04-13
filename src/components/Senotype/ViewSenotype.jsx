@@ -1,7 +1,8 @@
 import AppAccordion from '@/components/AppAccordion';
 import React, { useEffect, useRef, useState } from 'react';
 import { LinkOutlined, SearchOutlined } from '@ant-design/icons';
-import { Button, Col, Descriptions, Input, Row, Space, Table } from 'antd';
+import {Row, Col, Container} from 'react-bootstrap'
+import { Button, Descriptions, Input, Space, Table } from 'antd';
 import ClipboardCopy from '@/components/ClipboardCopy';
 import AppAnchor from '@/components/AppAnchor';
 import URLS from '@/lib/urls';
@@ -375,7 +376,7 @@ const buildReferences = (assertions) => {
 };
 
 export default function ViewSenotype({ senotype }) {
-  const [span, setSpan] = useState(20);
+  const [span, setSpan] = useState(10);
   const [sortedInfo, setSortedInfo] = useState({});
   const searchInput = useRef(null);
 
@@ -528,9 +529,9 @@ export default function ViewSenotype({ senotype }) {
   });
 
   return (
-    <>
+    <Container fluid>
       <Row>
-        <Col span={3}>
+        <Col lg={2}>
           <AppAnchor
             items={[
               { key: 'Summary', href: '#summary', title: 'Summary' },
@@ -569,8 +570,8 @@ export default function ViewSenotype({ senotype }) {
             setSpan={setSpan}
           />
         </Col>
-        <Col span={1}></Col>
-        <Col span={span} id={'view-senotype-col'}>
+       
+        <Col lg={span} id={'view-senotype-col'}>
           <div className={'markdown'}>
             <h2>
               {senotype.senotype.id}
@@ -656,6 +657,6 @@ export default function ViewSenotype({ senotype }) {
           </div>
         </Col>
       </Row>
-    </>
+    </Container>
   );
 }
