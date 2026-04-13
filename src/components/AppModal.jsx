@@ -1,5 +1,16 @@
 import { Modal } from 'antd';
 
+
+/**
+ * Displays a modal.
+ *
+ * @param {{ modal: any; setModal: any; handleModalOk: any; id: any; }} props 
+ * @param {object} props.modal Object containing antd.Modal props
+ * @param {useState.function} props.setModal 
+ * @param {function} props.handleModalOk 
+ * @param {string} props.id 
+ * @returns {*} 
+ */
 function AppModal({ modal, setModal, handleModalOk, id }) {
   const closeModal = () => {
     setModal({ ...modal, okText: 'OK', open: false });

@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect, useContext } from 'react';
-import { Row, Col, Container } from 'react-bootstrap';
+import { Row, Col } from 'react-bootstrap';
 import AppContext from '@/context/AppContext';
 import ENVS from '@/lib/envs';
 import URLS from '@/lib/urls';
