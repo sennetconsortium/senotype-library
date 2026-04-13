@@ -1,21 +1,31 @@
-import { useSearchUIContext } from 'search-ui/components/core/SearchUIContext';
+import {useEffect} from 'react'
 import { Select } from 'antd';
+import log from 'xac-loglevel';
+import { useSearchUIContext } from 'search-ui/components/core/SearchUIContext';
 
-function PageSizer({ options }) {
-  const { wasSearched, filters, rawResponse, setPageSize } =
-    useSearchUIContext();
+function PageSizer({ options, setTableData }) {
+  const {
+      pageSize,
+      setPageSize,
+    } = useSearchUIContext();
+
+  useEffect(() => {
+    console.log('PAGE', pageSize)
+  }, [pageSize])
 
   const onChange = (value) => {
+    setTableData([])
     setPageSize(Number(value));
   };
 
   const onSearch = (value) => {
-    console.log('search:', value);
+    log.info('PageSizer.onSearch', value);
   };
 
   return (
-    <div>
+    <div className='c-searchResults__pageSizer'>
       <Select
+        value={pageSize}
         showSearch={{ optionFilterProp: 'label', onSearch }}
         placeholder="Rows per page"
         onChange={onChange}

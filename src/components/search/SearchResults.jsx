@@ -9,12 +9,13 @@ import { assertionPredicates } from '@/config/search/senotype';
 import { ontology } from '@/cache/ontology';
 import Icon from '@ant-design/icons';
 import URLS from '@/lib/urls';
-import { Row, Col, Container } from 'react-bootstrap';
+import { Row, Col } from 'react-bootstrap';
 import PageSizer from './PageSizer';
 import ResultsExport from './ResultsExport';
 
 function SearchResults() {
   const [tableData, setTableData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const {
     wasSearched,
@@ -24,8 +25,7 @@ function SearchResults() {
     pageSize,
     setPageSize,
   } = useSearchUIContext();
-  const [_pageSize, _setPageSize] = useState(pageSize);
-
+  
   const columns = [
     {
       title: 'SenNet ID',
@@ -174,16 +174,20 @@ function SearchResults() {
   useEffect(() => {
     setTableData(rawResponse?.records?.senotypes);
     log.debug('SearchResults.useEffect', rawResponse);
+    setIsLoading(false);
   }, [rawResponse]);
 
-  useEffect(() => {
-    setPageSize(_pageSize);
-  }, [_pageSize]);
+ 
 
   const handleTableChange = (pagination, filters, sorter) => {
     log.debug('SearchResults.handleTableChange', pagination);
+    setIsLoading(true);
     setPageNumber(pagination.current);
-    _setPageSize(pagination.pageSize);
+    if (pagination.pageSize !== pageSize) {
+       setTableData([]);
+    }
+    setPageSize(pagination.pageSize);
+    
   };
 
   const getPageSizeOptions = () => {
@@ -203,7 +207,7 @@ function SearchResults() {
   };
 
   const pageSizeOptions = getPageSizeOptions();
-
+  const totalRows = rawResponse?.info?.senotypes?.total_result_count
   return (
     <div className="c-searchResults">
       <div className="c-searchResults__headerTools mb-3">
@@ -213,6 +217,7 @@ function SearchResults() {
           </Col>
           <Col className="d-flex flex-row-reverse">
             <PageSizer
+              setTableData={setTableData}
               options={pageSizeOptions.map((x) => ({
                 label: `${x} / page`,
                 value: x,
@@ -223,13 +228,14 @@ function SearchResults() {
         </Row>
       </div>
       <Table
+        loading={isLoading}
         columns={getColumns()}
         dataSource={tableData}
         rowKey={'id'}
         onChange={handleTableChange}
         scroll={{ x: 1500, y: 1500 }}
         pagination={{
-          total: rawResponse?.info?.senotypes?.total_result_count,
+          total: totalRows,
           pageSize: pageSize,
           showSizeChanger: pageSizeOptions.length > 0,
           pageSizeOptions,
