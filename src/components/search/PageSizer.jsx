@@ -1,16 +1,14 @@
-import { useSearchUIContext } from 'search-ui/components/core/SearchUIContext';
 import { Select } from 'antd';
+import log from 'xac-loglevel'
 
-function PageSizer({ options }) {
-  const { wasSearched, filters, rawResponse, setPageSize } =
-    useSearchUIContext();
+function PageSizer({ options, setPageSize }) {
 
   const onChange = (value) => {
     setPageSize(Number(value));
   };
 
   const onSearch = (value) => {
-    console.log('search:', value);
+    log.info('PageSizer.onSearch', value);
   };
 
   return (

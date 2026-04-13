@@ -25,6 +25,7 @@ function SearchResults() {
     setPageSize,
   } = useSearchUIContext();
   const [_pageSize, _setPageSize] = useState(pageSize);
+  const [isLoading, setIsLoading] = useState(true);
 
   const columns = [
     {
@@ -174,14 +175,17 @@ function SearchResults() {
   useEffect(() => {
     setTableData(rawResponse?.records?.senotypes);
     log.debug('SearchResults.useEffect', rawResponse);
+    setIsLoading(false);
   }, [rawResponse]);
 
   useEffect(() => {
+    setTableData([]);
     setPageSize(_pageSize);
   }, [_pageSize]);
 
   const handleTableChange = (pagination, filters, sorter) => {
     log.debug('SearchResults.handleTableChange', pagination);
+    setIsLoading(true);
     setPageNumber(pagination.current);
     _setPageSize(pagination.pageSize);
   };
@@ -203,7 +207,7 @@ function SearchResults() {
   };
 
   const pageSizeOptions = getPageSizeOptions();
-
+  const totalRows = rawResponse?.info?.senotypes?.total_result_count
   return (
     <div className="c-searchResults">
       <div className="c-searchResults__headerTools mb-3">
@@ -213,6 +217,7 @@ function SearchResults() {
           </Col>
           <Col className="d-flex flex-row-reverse">
             <PageSizer
+              setPageSize={_setPageSize}
               options={pageSizeOptions.map((x) => ({
                 label: `${x} / page`,
                 value: x,
@@ -223,13 +228,14 @@ function SearchResults() {
         </Row>
       </div>
       <Table
+        loading={isLoading}
         columns={getColumns()}
         dataSource={tableData}
         rowKey={'id'}
         onChange={handleTableChange}
         scroll={{ x: 1500, y: 1500 }}
         pagination={{
-          total: rawResponse?.info?.senotypes?.total_result_count,
+          total: totalRows,
           pageSize: pageSize,
           showSizeChanger: pageSizeOptions.length > 0,
           pageSizeOptions,
