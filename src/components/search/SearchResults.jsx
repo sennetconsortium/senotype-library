@@ -9,12 +9,13 @@ import { assertionPredicates } from '@/config/search/senotype';
 import { ontology } from '@/cache/ontology';
 import Icon from '@ant-design/icons';
 import URLS from '@/lib/urls';
-import { Row, Col, Container } from 'react-bootstrap';
+import { Row, Col } from 'react-bootstrap';
 import PageSizer from './PageSizer';
 import ResultsExport from './ResultsExport';
 
 function SearchResults() {
   const [tableData, setTableData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const {
     wasSearched,
@@ -24,9 +25,7 @@ function SearchResults() {
     pageSize,
     setPageSize,
   } = useSearchUIContext();
-  const [_pageSize, _setPageSize] = useState(pageSize);
-  const [isLoading, setIsLoading] = useState(true);
-
+  
   const columns = [
     {
       title: 'SenNet ID',
@@ -178,16 +177,17 @@ function SearchResults() {
     setIsLoading(false);
   }, [rawResponse]);
 
-  useEffect(() => {
-    setTableData([]);
-    setPageSize(_pageSize);
-  }, [_pageSize]);
+ 
 
   const handleTableChange = (pagination, filters, sorter) => {
     log.debug('SearchResults.handleTableChange', pagination);
     setIsLoading(true);
     setPageNumber(pagination.current);
-    _setPageSize(pagination.pageSize);
+    if (pagination.pageSize !== pageSize) {
+       setTableData([]);
+    }
+    setPageSize(pagination.pageSize);
+    
   };
 
   const getPageSizeOptions = () => {
@@ -217,7 +217,7 @@ function SearchResults() {
           </Col>
           <Col className="d-flex flex-row-reverse">
             <PageSizer
-              setPageSize={_setPageSize}
+              setTableData={setTableData}
               options={pageSizeOptions.map((x) => ({
                 label: `${x} / page`,
                 value: x,
