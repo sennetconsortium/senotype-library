@@ -8,10 +8,10 @@ const AUTH = {
     if (!info) return {};
     try {
       const auth = JSON.parse(atob(info));
-      log.debug('lib.getAuth', auth);
+      log.debug('AUTH.info', auth);
       return auth;
     } catch (e) {
-      log.error('lib.getAuth.error', e);
+      log.error('AUTH.info.error', e);
     }
     return {};
   },
