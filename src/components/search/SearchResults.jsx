@@ -16,7 +16,7 @@ import Image from 'next/image';
 function SearchResults() {
   const {
     wasSearched,
-    filters,
+    pageNumber,
     setPageNumber,
     rawResponse,
     pageSize,
@@ -228,6 +228,7 @@ function SearchResults() {
           onChange={handleTableChange}
           scroll={{ x: 1500, y: 1500 }}
           pagination={{
+            current: pageNumber,
             total: totalRows,
             pageSize: pageSize,
             showSizeChanger: pageSizeOptions.length > 0,
