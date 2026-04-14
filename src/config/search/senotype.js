@@ -145,6 +145,7 @@ export const SEARCH_SENOTYPE = {
     },
     source_fields: [
       ...assertionPredicates.map((a) => a.field),
+      // 'has_hallmark', 'inconclusively_regulates',
       'definition',
       'sennet_id',
       'title',

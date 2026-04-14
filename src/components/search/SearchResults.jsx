@@ -127,16 +127,23 @@ function SearchResults() {
     return <div>{list}</div>;
   };
   const getColumns = () => {
-    const assertionsWithIndividualColumns = assertionPredicates.map((a) => a.v);
     const allAssertions = Array.from(assertionPredicates);
     // allAssertions.push({
     //   name: 'Other Assertions',
-    //   k: 'other',
-    //   v: '',
+    //   alias: 'other',
+    //   field: ['has_hallmark', 'inconclusively_regulates'],
     //   ui: { w: 300 },
     // });
     const getTerms = (p, record) => {
-      const filtered = record[p.field] || [];
+      let filtered = []
+      if (Array.isArray(p.field)) {
+        for (const f of p.field) {
+          filtered = filtered.concat(record[f] || [])
+        }
+      } else {
+        filtered = record[p.field] || [];
+      }
+      
       const terms = filtered.map((a) => a.term);
       const content = terms.join(', ');
       return { filtered, terms, content };
