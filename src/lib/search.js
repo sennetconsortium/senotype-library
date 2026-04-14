@@ -6,16 +6,15 @@ const SEARCH = {
   submitterTransform: (value, facet) => {
     let name = value;
     try {
-      name = facet?.data?.meta?.hits?.hits[0]?._source.submitter.name;
+      name = facet?.data?.meta?.hits?.hits[0]?._source.created_by_user_displayname;
     } catch (e) {
       log.error('SEARCH.submitterTransform', value, facet);
     }
-    return <span title={value}>{`${name?.first} ${name?.last}`}</span>;
+    return <span title={value}>{`${name}`}</span>;
   },
   organBucketsTransform: (ops) => {
     const { aggregations, field, component } = ops;
-    const buckets =
-      aggregations[field]?.filtered_terms?.buckets?.buckets?.buckets;
+    const buckets = SEARCH.bucketsTransform(ops);
     log.debug(
       'SEARCH.organBucketsTransform',
       component,

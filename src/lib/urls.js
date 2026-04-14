@@ -42,6 +42,12 @@ const URLS = {
     if (imgName === 'lung') {
       imgName = 'lungs';
     }
+    if (imgName === 'lymph-node') {
+      imgName = 'lymph-nodes';
+    }
+    if (imgName === 'ovary') {
+      imgName = 'ovaries';
+    }
     if (imgName === 'bone') {
       imgName = 'bone-marrow';
     }
