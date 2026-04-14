@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useEffectEvent } from 'react';
 import { Anchor } from 'antd';
 import AppFloatingButton from './AppFloatingButton';
 import THEME from '@/lib/theme';
@@ -18,9 +18,9 @@ const AppAnchor = ({
     setSpan(span === 10 ? 12 : 10);
   };
 
-  const updatePosition = () => {
+  const updatePosition = useEffectEvent(() => {
     setAffix(THEME.isLgScreen())
-  }
+  })
 
   useEffect(() => {
       updatePosition()
