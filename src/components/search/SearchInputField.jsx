@@ -16,7 +16,7 @@ function SearchInputField() {
     }
   };
   return (
-    <div>
+    <div className='c-searchInputField'>
       <InputGroup className="mb-3 mt-3" size="lg">
         <Form.Control
           id="query"
