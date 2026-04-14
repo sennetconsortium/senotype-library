@@ -1,3 +1,4 @@
+import { autoBlobDownloader } from '@/lib/general';
 import { DownloadOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import { Button } from 'react-bootstrap';
@@ -15,19 +16,20 @@ function ResultsExport({ data, columns }) {
     let tableDataTSV = '';
     const _columns = Array.from(columns);
     for (let col of _columns) {
-      if (col.name.length) {
-        tableDataTSV += `${col.name}\t`;
+      if (col.title.length) {
+        tableDataTSV += `${col.title}\t`;
       }
     }
     tableDataTSV += '\n';
     for (const d of data) {
       for (let col of _columns) {
-        if (col.name.length) {
-          tableDataTSV += `${d[col.id]}\t`;
+        if (col.title.length) {
+          tableDataTSV += `${JSON.stringify(d[col.dataIndex] || '')}\t`;
         }
       }
       tableDataTSV += '\n';
     }
+    
     autoBlobDownloader(
       [tableDataTSV],
       'text/tab-separated-values',

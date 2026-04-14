@@ -130,12 +130,12 @@ function SearchResults() {
   };
   const getColumns = () => {
     const allAssertions = Array.from(assertionPredicates);
-    allAssertions.push({
-      name: 'Other Assertions',
-      alias: 'other',
-      field: ['has_hallmark', 'inconclusively_regulates'],
-      ui: { w: 300 },
-    });
+    // allAssertions.push({
+    //   name: 'Other Assertions',
+    //   alias: 'other',
+    //   field: ['has_hallmark', 'inconclusively_regulates'],
+    //   ui: { w: 300 },
+    // });
     const getTerms = (p, record) => {
       let filtered = []
       if (Array.isArray(p.field)) {
@@ -210,6 +210,7 @@ function SearchResults() {
 
   const pageSizeOptions = getPageSizeOptions();
   const totalRows = rawResponse?.info?.senotypes?.total_result_count;
+  const allColumns = getColumns();
   return (
     <div className="c-searchResults">
       <div className="c-searchResults__headerTools mb-3">
@@ -218,13 +219,13 @@ function SearchResults() {
             <SearchResultsMeta />
           </Col>
           <Col className="d-flex flex-row-reverse">
-            <ResultsExport />
+            <ResultsExport columns={allColumns} data={tableData}/>
           </Col>
         </Row>
       </div>
       <Table
         loading={isLoading}
-        columns={getColumns()}
+        columns={allColumns}
         dataSource={tableData}
         rowKey={'id'}
         onChange={handleTableChange}
