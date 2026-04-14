@@ -13,7 +13,7 @@ function ClearFiltersButton({ shouldClearFilters = true }) {
   }
 
   return (
-    <div className="clear-filter-div">
+    <div className="c-siderFacets__clearFiltersButton">
       <Button onClick={handleClearFiltersClick} className="w-100">
         Clear Filters
       </Button>

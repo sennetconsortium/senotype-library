@@ -41,10 +41,11 @@ export const flipObj = (obj) => {
 export const parseOntologyTerm = (val) => {
   if (!window.ONTOLOGY_CACHE) return val;
   for (const o in window.ONTOLOGY_CACHE) {
-    if (val in window.ONTOLOGY_CACHE[o].terms) {
-      return window.ONTOLOGY_CACHE[o].terms[val];
+    if (val in window.ONTOLOGY_CACHE[o].termsFlipped) {
+      return window.ONTOLOGY_CACHE[o].termsFlipped[val];
     }
   }
+  return val.titleCase();
 };
 
 export function autoBlobDownloader(data, type, filename) {
@@ -56,4 +57,4 @@ export function autoBlobDownloader(data, type, filename) {
   a.click();
   a.remove();
   window.URL.revokeObjectURL(url);
-};
+}

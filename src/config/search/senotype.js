@@ -5,10 +5,10 @@ import ENVS from '@/lib/envs';
 import AUTH from '@/lib/auth';
 
 export const assertionPredicates = [
-  { k: 'source_type', name: 'Taxon', v: 'in_taxon', ui: { w: 100 } },
-  { k: 'organ', v: 'located_in', ui: { w: 150 } },
-  { k: 'cell_type', v: 'has_cell_type', ui: { w: 300 } },
-  { k: 'dataset_type', v: 'has_assay', ui: { w: 200 } },
+  { field: 'in_taxon', ui: { w: 100 } },
+  { field: 'located_in', ui: { w: 250 } },
+  { field: 'has_cell_type', ui: { w: 300 } },
+  { field: 'has_assay', ui: { w: 200 } },
 ];
 
 const {
@@ -22,71 +22,13 @@ const connector = new SearchAPIConnector({
   indexUrl: URLS.api.search,
   accessToken: AUTH.token(),
   beforeSearchCall: (queryOptions, next) => {
-    let filter = queryOptions?.query.bool?.filter;
-    filter = filter ? (Array.isArray(filter) ? filter : [filter]) : null;
-    if (filter) {
-      let filters = [];
-      let nested = ['assertions.objects'];
-      let paths;
-      for (const f of filter) {
-        for (const t in f.terms) {
-          paths = nested.filter((n) => t.indexOf(n) !== -1);
-          if (paths.length) {
-            filters.push({
-              nested: {
-                path: paths[0],
-                query: f,
-              },
-            });
-          } else {
-            filters.push(f);
-          }
-        }
-      }
-      queryOptions.query.bool.filter = filters;
-    }
-
     const aggs = queryOptions.aggs || {};
 
-    for (const x of assertionPredicates) {
-      aggs[x.k] = {
-        nested: {
-          path: 'assertions',
-        },
-        aggs: {
-          filtered_terms: {
-            filter: {
-              term: {
-                'assertions.predicate.term': x.v,
-              },
-            },
-            aggs: {
-              buckets: {
-                nested: {
-                  path: 'assertions.objects',
-                },
-                aggs: {
-                  buckets: {
-                    terms: {
-                      field: 'assertions.objects.term.keyword',
-                      size: 100,
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
-      };
-
-      delete aggs.source_type.terms;
-    }
-
-    aggs.submitter_name.aggs = {
+    aggs.created_by_user_email.aggs = {
       meta: {
         top_hits: {
           size: 1,
-          _source: ['submitter.name'],
+          _source: ['created_by_user_displayname'],
         },
       },
     };
@@ -105,7 +47,7 @@ export const SEARCH_SENOTYPE = {
       sennet_id: {
         label: 'SenNet ID',
         type: 'value',
-        field: 'senotype.id',
+        field: 'sennet_id.keyword',
         isExpanded: false,
         filterType: 'any',
         isFilterable: false,
@@ -114,40 +56,28 @@ export const SEARCH_SENOTYPE = {
         isAggregationActive: true,
         isFacetVisible: false,
       },
-      source_type: {
-        label: 'Source Type',
+      in_taxon: {
+        label: 'Taxon',
         type: 'value',
-        field: 'assertions.objects.term.keyword',
+        field: 'in_taxon.term.keyword',
         filterType: 'any',
         isExpanded: false,
         isFilterable: false,
         facetType: 'term',
         bucketsTransform: bucketsTransform,
         isAggregationActive: true,
-        isFacetVisible: doesAggregationHaveBuckets('source_type'),
+        isFacetVisible: doesAggregationHaveBuckets('in_taxon'),
       },
-      // 'organ': {
-      //     label: 'Organ',
-      //     type: 'value',
-      //     field: 'assertions.objects.term.keyword',
-      //     isExpanded: false,
-      //     filterType: 'any',
-      //     isFilterable: false,
-      //     facetType: 'term',
-      //     bucketsTransform: bucketsTransform,
-      //     isAggregationActive: true,
-      //     isFacetVisible: doesAggregationHaveBuckets('organ')
-      // },
-      organ: {
+      located_in: {
         label: 'Organ',
         type: 'value',
-        field: 'assertions.objects.term.keyword',
+        field: 'located_in.term.keyword',
         isExpanded: false,
         filterType: 'any',
         isFilterable: false,
         facetType: 'hierarchy',
         bucketsTransform: organBucketsTransform,
-        groupByField: 'assertions.objects.term.keyword',
+        groupByField: 'located_in.term.keyword',
         isHierarchyOption: (option) => {
           return ONTOLOGY_CACHE.organ_types.laterals.includes(option);
         },
@@ -157,31 +87,31 @@ export const SEARCH_SENOTYPE = {
           });
         },
         isAggregationActive: true,
-        isFacetVisible: doesAggregationHaveBuckets('organ'),
+        isFacetVisible: doesAggregationHaveBuckets('located_in'),
       },
-      cell_type: {
+      has_cell_type: {
         label: 'Cell Type',
         type: 'value',
-        field: 'assertions.objects.term.keyword',
+        field: 'has_cell_type.term.keyword',
         isExpanded: false,
         filterType: 'any',
         isFilterable: false,
         facetType: 'term',
         bucketsTransform: bucketsTransform,
         isAggregationActive: true,
-        isFacetVisible: doesAggregationHaveBuckets('cell_type'),
+        isFacetVisible: doesAggregationHaveBuckets('has_cell_type'),
       },
-      dataset_type: {
+      has_assay: {
         label: 'Dataset Type',
         type: 'value',
-        field: 'assertions.objects.term.keyword',
+        field: 'has_assay.term.keyword',
         isExpanded: false,
         filterType: 'any',
         isFilterable: false,
         facetType: 'term',
         bucketsTransform: bucketsTransform,
         isAggregationActive: true,
-        isFacetVisible: doesAggregationHaveBuckets('dataset_type'),
+        isFacetVisible: doesAggregationHaveBuckets('has_assay'),
       },
       affiliation_group: {
         label: 'Affiliation',
@@ -191,17 +121,17 @@ export const SEARCH_SENOTYPE = {
           return visibleChildren.length > 0;
         },
         facets: {
-          submitter_name: {
+          created_by_user_email: {
             label: 'Registered By',
             type: 'value',
-            field: 'submitter.email',
+            field: 'created_by_user_email.keyword',
             isExpanded: false,
             filterType: 'any',
             isFilterable: false,
             facetType: 'term',
             isAggregationActive: true,
             transformFunction: submitterTransform,
-            isFacetVisible: doesAggregationHaveBuckets('submitter_name'),
+            isFacetVisible: doesAggregationHaveBuckets('created_by_user_email'),
           },
         },
       },
@@ -214,11 +144,13 @@ export const SEARCH_SENOTYPE = {
       all_text: { type: 'value' },
     },
     source_fields: [
-      'senotype',
-      'submitter',
-      'assertions',
-      'assertions.objects.term',
-      'assertions.predicate.term',
+      ...assertionPredicates.map((a) => a.field),
+      'has_hallmark',
+      'inconclusively_regulates',
+      'definition',
+      'sennet_id',
+      'title',
+      'created_by_user_email',
     ],
     // Moving this configuration into `searchQuery` so the config inside search-tools can read this
     trackTotalHits: true,

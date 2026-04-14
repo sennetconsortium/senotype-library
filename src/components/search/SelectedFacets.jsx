@@ -28,6 +28,7 @@ function SelectedFacets() {
   };
 
   const convertToDisplayValue = (facet, value) => {
+   
     switch (facet.facetType) {
       case 'daterange':
         return new Date(value).toLocaleDateString('en-US', { timeZone: 'UTC' });
@@ -37,7 +38,7 @@ function SelectedFacets() {
         if (!facet.transformFunction) {
           return parseOntologyTerm(value);
         }
-        return facet.transformFunction(value, facet);
+        return facet?.transformFunction(value, facet);
     }
   };
 

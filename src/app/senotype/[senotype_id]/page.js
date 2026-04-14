@@ -17,7 +17,7 @@ export default function Page() {
   }
 
   return (
-    <BasicLayout classNameMain="mt-2">
+    <BasicLayout>
       <>
         {loading && (
           <>

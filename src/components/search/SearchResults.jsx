@@ -5,7 +5,7 @@ import ClipboardCopy from '../ClipboardCopy';
 import ModalOverComponent from '../ModalOverComponent';
 import SearchResultsMeta from './SearchResultsMeta';
 import log from 'xac-loglevel';
-import { assertionPredicates } from '@/config/search/senotype';
+import { assertionPredicates, SEARCH_SENOTYPE } from '@/config/search/senotype';
 import { ontology } from '@/cache/ontology';
 import Icon from '@ant-design/icons';
 import URLS from '@/lib/urls';
@@ -33,15 +33,15 @@ function SearchResults() {
   const columns = [
     {
       title: 'SenNet ID',
-      dataIndex: 'senotype.id',
-      key: 'senotype.id',
+      dataIndex: 'sennet_id',
+      key: 'sennet_id',
       width: 250,
-      sorter: (a, b) => a.senotype.id.localeCompare(b.senotype.id),
+      sorter: (a, b) => a.sennet_id.localeCompare(b.sennet_id),
       render: (_, record) => (
         <>
-          <a href={`/senotype/${record.senotype.id}`}>{record.senotype.id}</a>
+          <a href={`/senotype/${record.sennet_id}`}>{record.sennet_id}</a>
           <ClipboardCopy
-            text={record.senotype.id}
+            text={record.sennet_id}
             title={'Copy SenNet ID {text} to clipboard'}
           />
         </>
@@ -49,21 +49,21 @@ function SearchResults() {
     },
     {
       title: 'Title',
-      dataIndex: 'senotype.name',
-      key: 'senotype.name',
+      dataIndex: 'title',
+      key: 'title',
       width: 350,
-      sorter: (a, b) => a.senotype.name.localeCompare(b.senotype.name),
+      sorter: (a, b) => a.title.localeCompare(b.title),
       render: (_, record) => {
         return (
           <div>
-            {record.senotype.name}
+            {record.title}
             <br />
             <ModalOverComponent
-              modalContent={record.senotype.definition}
+              modalContent={record.definition}
               tag="small"
               maxLength={100}
             >
-              <small>{record.senotype.definition.substr(0, 100)}</small>
+              <small>{record.definition.substr(0, 100)}</small>
             </ModalOverComponent>
           </div>
         );
@@ -83,8 +83,9 @@ function SearchResults() {
     for (const o of organs) {
       if (o) {
         list.push(
-          <a key={o} href={`${URLS.portal}organs/${o?.toLowerCase()}`}>
+          <a key={o} href={`${URLS.portal}organs/${o?.toDashedCase()}`}>
             <Button
+            className='mb-2'
               icon={
                 <Icon
                   component={() => (
@@ -110,51 +111,49 @@ function SearchResults() {
 
   const cellTypesRender = (filtered) => {
     const list = [];
-    for (const a of filtered) {
-      for (const [i, c] of a.objects.entries()) {
-        list.push(
-          <span key={c.code}>
-            <a
-              href={`${URLS.obo}${c.code.replaceAll(':', '_')}`}
-              className="text-black"
-            >
-              {c.term} <i className="bi bi-link-45deg text-primary"></i>
-            </a>
-            {i < a.objects.length - 1 ? ',' : ''}{' '}
-          </span>,
-        );
-      }
+    for (const [i, c] of filtered.entries()) {
+      list.push(
+        <span key={c.code}>
+          <a
+            href={`${URLS.obo}${c.code.replaceAll(':', '_')}`}
+            className="text-black"
+          >
+            {c.term} <i className="bi bi-link-45deg text-primary"></i>
+          </a>
+          {i < filtered.length - 1 ? ',' : ''}{' '}
+        </span>,
+      );
     }
 
     return <div>{list}</div>;
   };
   const getColumns = () => {
-    const assertionsWithIndividualColumns = assertionPredicates.map((a) => a.v);
     const allAssertions = Array.from(assertionPredicates);
     allAssertions.push({
       name: 'Other Assertions',
-      k: 'other',
-      v: '',
+      alias: 'other',
+      field: ['has_hallmark', 'inconclusively_regulates'],
       ui: { w: 300 },
     });
     const getTerms = (p, record) => {
-      const filtered =
-        p.k === 'other'
-          ? record.assertions.filter(
-              (r) =>
-                assertionsWithIndividualColumns.indexOf(r.predicate.term) ===
-                -1,
-            )
-          : record.assertions.filter((r) => r.predicate.term === p.v);
-      const terms = filtered.map((a) => a.objects?.map((o) => o.term));
+      let filtered = []
+      if (Array.isArray(p.field)) {
+        for (const f of p.field) {
+          filtered = filtered.concat(record[f] || [])
+        }
+      } else {
+        filtered = record[p.field] || [];
+      }
+      
+      const terms = filtered.map((a) => a.term);
       const content = terms.join(', ');
       return { filtered, terms, content };
     };
     for (const p of allAssertions) {
       columns.push({
-        title: p.name || p.k.replaceAll('_', ' ').titleCase(),
-        dataIndex: `assertions.predicate.term.${p.k}`,
-        key: `assertions.predicate.term.${p.k}`,
+        title: p.name || SEARCH_SENOTYPE.searchQuery.facets[p.field]?.label,
+        dataIndex: `${p.field}`,
+        key: `${p.field}`,
         sorter: (a, b) => {
           const termsA = getTerms(p, a);
           const termsB = getTerms(p, b);
@@ -164,10 +163,10 @@ function SearchResults() {
         render: (_, record) => {
           const { filtered, terms, content } = getTerms(p, record);
 
-          if (p.k === 'organ') {
+          if (p.field === 'located_in') {
             return organIconRender(terms);
           }
-          if (p.k === 'cell_type') {
+          if (p.field === 'has_cell_type') {
             return cellTypesRender(filtered);
           } else {
             return (
