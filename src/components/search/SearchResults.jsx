@@ -83,7 +83,7 @@ function SearchResults() {
     for (const o of organs) {
       if (o) {
         list.push(
-          <a key={o} href={`${URLS.portal}organs/${o?.toLowerCase()}`}>
+          <a key={o} href={`${URLS.portal}organs/${o?.toDashedCase()}`}>
             <Button
               icon={
                 <Icon

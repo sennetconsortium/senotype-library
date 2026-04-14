@@ -1,3 +1,5 @@
+import log from 'xac-loglevel'
+
 const URLS = {
   login: process.env.NEXT_PUBLIC_LOGIN_URL,
   edit: '/edit',
@@ -33,25 +35,58 @@ const URLS = {
     explore: process.env.NEXT_PUBLIC_SCICRUNCH_EXPLORE_URL,
     higher: process.env.NEXT_PUBLIC_SCICRUNCH_HIGHER_URL,
   },
+  /**
+   * Takes the organ hierarchy term and returns a src img url.
+   * @param {string} o 
+   * @returns 
+   */
   organIcon: (o) => {
     let imgName = o.toDashedCase();
     imgName =
       imgName[imgName.length - 1] === '-'
         ? imgName.substr(0, imgName.length - 1)
         : imgName;
-    if (imgName === 'lung') {
-      imgName = 'lungs';
+
+    if (['muscle', 'other', 'unknown'].indexOf(imgName) !== -1) {
+      return process.env.NEXT_PUBLIC_OTHER_ORGAN_ICON_URL;
     }
-    if (imgName === 'lymph-node') {
-      imgName = 'lymph-nodes';
+
+    switch (imgName) {
+      case 'lung':
+        imgName = 'lungs';
+        break;
+      case 'kidney':
+        imgName = 'kidneys';
+        break;
+      case 'lymph-node':
+        imgName = 'lungs';
+        break;
+      case 'lung':
+        imgName = 'lymph-nodes';
+        break;
+      case 'ovary':
+        imgName = 'ovaries';
+        break;
+      case 'bone':
+        imgName = 'bone-marrow';
+        break;
+      case 'mammary-gland':
+        imgName = 'breast';
+        break;
+      case 'tonsil':
+        imgName = 'palatine-tonsil';
+        break;
+      case 'intervertebral-disc':
+        imgName = 'spinal-cord';
+        break;
+      case 'adipose-tissue':
+        imgName = 'skin';
+        break;
+      default:
+        log.info('URLS.organIcon', imgName);
     }
-    if (imgName === 'ovary') {
-      imgName = 'ovaries';
-    }
-    if (imgName === 'bone') {
-      imgName = 'bone-marrow';
-    }
-    return `${process.env.NEXT_PUBLIC_ORGAN_ICON_PREFIX}${imgName}.svg`;
+    
+    return `https://cdn.humanatlas.io/hra-design-system/icons/organs/organ-icon-${imgName}.svg`;
   },
   getSciCrunchUrl: (searchTerm) => {
     let baseUrl = '';
