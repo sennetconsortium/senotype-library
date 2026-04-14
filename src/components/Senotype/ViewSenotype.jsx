@@ -61,7 +61,7 @@ const buildSenotype = (senotype) => {
             <div key={`location_${index}`} className={'mb-1'}>
               {item.term}&nbsp;
               <img
-                src={URLS.organIcon(item.code)}
+                src={URLS.organIcon(item.term)}
                 className="w-fixed"
                 width={16}
                 height={16}
