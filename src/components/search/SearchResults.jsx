@@ -182,7 +182,9 @@ function SearchResults() {
   const handleTableChange = (pagination, filters, sorter) => {
     log.debug('SearchResults.handleTableChange', pagination);
     setPageNumber(pagination.current);
-    setPageSize(pagination.pageSize);
+    if (pagination.pageSize !== pageSize) {
+      setPageSize(pagination.pageSize);
+    }
   };
 
   const getPageSizeOptions = () => {
