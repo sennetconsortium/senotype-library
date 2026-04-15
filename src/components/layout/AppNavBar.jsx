@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useContext } from 'react';
 import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
@@ -7,6 +7,7 @@ import Image from 'next/image';
 import ENVS from '@/lib/envs';
 import AppContext from '@/context/AppContext';
 import ClipboardCopy from '../ClipboardCopy';
+import URLS from '@/lib/urls';
 
 function AppNavBar() {
   const { auth } = useContext(AppContext);
@@ -36,6 +37,13 @@ function AppNavBar() {
             id="basic-navbar-nav"
             className="justify-content-end"
           >
+            {auth.hasSenotypeWrite && (
+              <Nav>
+                <Nav.Link href={`${URLS.senotypeEditor}edit`}>
+                  Register Senotype
+                </Nav.Link>
+              </Nav>
+            )}
             <Nav>
               {/* <Nav.Link href="#home">Home</Nav.Link> */}
               <NavDropdown title={auth.name} id="basic-nav-dropdown">

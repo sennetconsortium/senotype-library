@@ -16,6 +16,7 @@ export const AppProvider = ({ children }) => {
 
     let admin;
     let groups;
+    let senotypeWrite;
     try {
       admin = await API.fetch({
         url: URLS.api.ingest.privs.admin,
@@ -23,6 +24,15 @@ export const AppProvider = ({ children }) => {
       });
     } catch (error) {
       admin = null;
+      log.error(error);
+    }
+    try {
+      senotypeWrite = await API.fetch({
+        url: URLS.api.ingest.privs.senotypeWrite,
+        ...ops,
+      });
+    } catch (error) {
+      senotypeWrite = null;
       log.error(error);
     }
     try {
@@ -39,6 +49,7 @@ export const AppProvider = ({ children }) => {
       ...info,
       isAuthenticated,
       isAuthorized: isAuthenticated,
+      hasSenotypeWrite: senotypeWrite?.has_senotype_write,
       isAdmin: admin?.has_data_admin_privs,
       userGroups: groups?.user_write_groups,
     });

@@ -10,6 +10,8 @@ const URLS = {
       base: process.env.NEXT_PUBLIC_INGEST_API_BASE,
       privs: {
         admin: process.env.NEXT_PUBLIC_INGEST_API_BASE + 'privs/has-data-admin',
+        senotypeWrite:
+          process.env.NEXT_PUBLIC_INGEST_API_BASE + 'privs/has-senotype-write',
         groups:
           process.env.NEXT_PUBLIC_INGEST_API_BASE + 'privs/user-write-groups',
       },
@@ -17,6 +19,7 @@ const URLS = {
     search: process.env.NEXT_PUBLIC_SEARCH_API_BASE,
     ontology: process.env.NEXT_PUBLIC_ONTOLOGY_API_BASE,
   },
+  senotypeEditor: process.env.NEXT_PUBLIC_EDITOR_URL,
   portal: process.env.NEXT_PUBLIC_PORTAL_URL,
   ontologyClasses: {
     home: process.env.NEXT_PUBLIC_CL_HOME_URL,
@@ -37,8 +40,8 @@ const URLS = {
   },
   /**
    * Takes the organ hierarchy term and returns a src img url.
-   * @param {string} o 
-   * @returns 
+   * @param {string} o
+   * @returns
    */
   organIcon: (o) => {
     let imgName = o.toDashedCase();
@@ -85,7 +88,7 @@ const URLS = {
       default:
         log.info('URLS.organIcon', imgName);
     }
-    
+
     return `https://cdn.humanatlas.io/hra-design-system/icons/organs/organ-icon-${imgName}.svg`;
   },
   getSciCrunchUrl: (searchTerm) => {

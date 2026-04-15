@@ -1,11 +1,18 @@
 import AppAccordion from '@/components/AppAccordion';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { LinkOutlined, SearchOutlined } from '@ant-design/icons';
 import { Col, Container, Row } from 'react-bootstrap';
 import { Button, Descriptions, Input, Space, Table } from 'antd';
 import ClipboardCopy from '@/components/ClipboardCopy';
 import AppAnchor from '@/components/AppAnchor';
 import URLS from '@/lib/urls';
+import AppContext from '@/context/AppContext';
 
 const buildSummary = (senotype) => {
   return [
@@ -320,6 +327,8 @@ const buildReferences = (senotype) => {
 };
 
 export default function ViewSenotype({ senotype }) {
+  const { auth } = useContext(AppContext);
+
   const [span, setSpan] = useState(10);
   const [sortedInfo, setSortedInfo] = useState({});
   const searchInput = useRef(null);
@@ -510,7 +519,7 @@ export default function ViewSenotype({ senotype }) {
                       title: 'Regulating Markers',
                     },
                   ]
-                : [])
+                : []),
             ]}
             contentId={'view-senotype-col'}
             span={span}
@@ -527,11 +536,12 @@ export default function ViewSenotype({ senotype }) {
                 title={'Copy Senotype ID {text} to clipboard'}
               />
             </h2>
-            <Button
-              href={`${process.env.NEXT_PUBLIC_EDITOR_URL}edit/${senotype.sennet_id}`}
-            >
-              Edit
-            </Button>
+
+            {auth.isAuthenticated && auth.hasSenotypeWrite && (
+              <Button href={`${URLS.senotypeEditor}edit/${senotype.sennet_id}`}>
+                Edit
+              </Button>
+            )}
 
             <AppAccordion title={'Summary'} id={'summary'}>
               <Descriptions items={buildSummary(senotype)} column={2} />
@@ -549,7 +559,7 @@ export default function ViewSenotype({ senotype }) {
 
             {buildReferences(senotype).length > 0 && (
               <AppAccordion title={'References'} id={'references'}>
-                <Descriptions items={buildReferences(senotype)} column={1}/>
+                <Descriptions items={buildReferences(senotype)} column={1} />
               </AppAccordion>
             )}
 
