@@ -39,7 +39,7 @@ function SearchResults() {
       sorter: (a, b) => a.sennet_id.localeCompare(b.sennet_id),
       render: (_, record) => (
         <>
-          <a href={`/senotype/${record.sennet_id}`}>{record.sennet_id}</a>
+          <a href={`/senotype/${record.uuid}`}>{record.sennet_id}</a>
           <ClipboardCopy
             text={record.sennet_id}
             title={'Copy SenNet ID {text} to clipboard'}

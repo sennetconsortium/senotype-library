@@ -151,6 +151,7 @@ export const SEARCH_SENOTYPE = {
       'sennet_id',
       'title',
       'created_by_user_email',
+      'uuid'
     ],
     // Moving this configuration into `searchQuery` so the config inside search-tools can read this
     trackTotalHits: true,

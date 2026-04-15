@@ -38,10 +38,10 @@ const API = {
   search: async (body, index = 'entities') => {
     return await API.fetch({ url: `${URLS.api.search}${index}/search`, body });
   },
-  fetchSenotype: async (senotypeId) => {
+  fetchSenotype: async (senotypeUuid) => {
     let data = {};
 
-    const body = simple_query_builder('sennet_id', senotypeId);
+    const body = simple_query_builder('uuid', senotypeUuid);
 
     let jsonData = await API.search(body, ENVS.index.senotype);
     if (jsonData.hasOwnProperty('error')) {
@@ -52,7 +52,7 @@ const API = {
       if (total !== 0) {
         let senotype; //result["hits"]["hits"][0]["_source"]
         jsonData['hits']['hits'].forEach((hit) => {
-          if (hit['_source']['sennet_id'] === senotypeId) {
+          if (hit['_source']['uuid'] === senotypeUuid) {
             senotype = hit['_source'];
           }
         });
