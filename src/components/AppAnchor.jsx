@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useEffectEvent } from 'react';
+import { useState, useEffect, useEffectEvent } from 'react';
 import { Anchor } from 'antd';
 import AppFloatingButton from './AppFloatingButton';
 import THEME from '@/lib/theme';
@@ -29,7 +29,7 @@ const AppAnchor = ({
   }, []);
 
   return (
-    <div className={`c-anchor mb-4`}>
+    <div className={`c-anchor ${anchorVisible ? 'mb-4' : ''}`}>
       <AppFloatingButton
         show={anchorVisible}
         onClick={toggleVisibility}

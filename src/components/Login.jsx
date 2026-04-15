@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useContext } from 'react';
+import { useEffect, useContext } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import AppContext from '@/context/AppContext';
 import ENVS from '@/lib/envs';
