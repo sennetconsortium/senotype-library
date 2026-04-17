@@ -539,7 +539,7 @@ export default function ViewSenotype({ senotype }) {
             </h2>
 
             {auth.isAuthenticated && auth.hassenotypeEdit && (
-              <Button href={`${URLS.senotypeEditor}edit/${senotype.sennet_id}`}>
+              <Button className={'mb-2'} href={`${URLS.senotypeEditor}edit/${senotype.sennet_id}`}>
                 Edit
               </Button>
             )}
