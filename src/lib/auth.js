@@ -17,7 +17,7 @@ const AUTH = {
   },
   token: () => AUTH.info().groups_token,
   logout: () => {
-    deleteCookie('info');
+    deleteCookie('info', {path: '/', domain: getCookieDomain(), sameSite: "Lax"})
     sessionStorage.clear();
   },
 };
