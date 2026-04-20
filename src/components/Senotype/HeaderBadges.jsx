@@ -1,5 +1,5 @@
 import { Skeleton } from 'antd';
-import { assertionPredicates } from '@/config/search/senotype';
+import { ubkgPredicates } from '@/config/search/senotype';
 import URLS from '@/lib/urls';
 import { organHierarchy } from '@/lib/general';
 
@@ -29,7 +29,7 @@ function HeaderBadges({ data }) {
     let isOrgan = false
     let term
 
-    for (const p of assertionPredicates) {
+    for (const p of ubkgPredicates) {
       // skip cell types since the terms can be long, which won't output neat badges
       if (p.field !== 'has_cell_type') {
 
