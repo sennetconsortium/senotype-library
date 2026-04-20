@@ -103,7 +103,8 @@ jobs:
           PORT: 22
           RUNNER_IP: ${{ steps.runner_ip.outputs.ip }}
           MODE: authorize
-        run: NODE_PATH=/tmp/aws-deps/node_modules node $GITHUB_WORKSPACE/.github/scripts/update-security-group.mjs
+        run: node $GITHUB_WORKSPACE/.github/scripts/update-security-group.mjs
+        working-directory: /tmp/aws-deps
 
       - name: Deploy to Server via SSH
         uses: appleboy/ssh-action@v1
@@ -126,4 +127,5 @@ jobs:
           PORT: 22
           RUNNER_IP: ${{ steps.runner_ip.outputs.ip }}
           MODE: revoke
-        run: NODE_PATH=/tmp/aws-deps/node_modules node $GITHUB_WORKSPACE/.github/scripts/update-security-group.mjs
+        run: node $GITHUB_WORKSPACE/.github/scripts/update-security-group.mjs
+        working-directory: /tmp/aws-deps
