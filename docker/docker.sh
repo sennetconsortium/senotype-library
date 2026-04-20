@@ -7,6 +7,8 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 cd "$REPO_ROOT"
 
+VERSION="$(cat VERSION)"
+export VERSION
 COMMAND=${1:-}
 
 usage() {
@@ -24,6 +26,7 @@ case "$COMMAND" in
     grep '^NEXT_PUBLIC_' .env > .env.docker
     echo "Done. Running docker compose build..."
     docker compose -f docker/docker-compose.yml build
+    echo "Built image version $VERSION"
     ;;
   start)
     docker compose -f docker/docker-compose.yml up -d
