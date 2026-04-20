@@ -9,7 +9,15 @@ function SenotypeForm() {
   const { senotype } = useContext(EditContext);
   return (
     <>
-      <h1 className="h2 mb-5">{senotype ? 'Edit' : 'New'}</h1>
+      <h1 className="h2 mb-5">
+        {senotype ? (
+          <span>
+            Edit <span className="text-muted">{senotype.sennet_id}</span>
+          </span>
+        ) : (
+          'New'
+        )}
+      </h1>
       <Tabs
         id="senotypeForm--Tab"
         activeKey={key}
@@ -21,12 +29,14 @@ function SenotypeForm() {
             <InputField
               label={'Name'}
               controlProps={{
+                defaultValue: senotype?.title,
                 required: true,
               }}
             />
             <InputField
               label={'Description'}
               controlProps={{
+                defaultValue: senotype?.definition,
                 as: 'textarea',
                 rows: 3,
               }}
