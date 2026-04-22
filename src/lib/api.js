@@ -3,6 +3,7 @@ import log from 'xac-loglevel';
 import AUTH from './auth';
 import { simple_query_builder } from '@/search-ui/lib/search-tools';
 import ENVS from './envs';
+import PREDICATE from '@/lib/predicate';
 
 const API = {
   jsonHeader: (headers) => {
@@ -65,7 +66,10 @@ const API = {
   fetchForForm: async (predicate, query) => {
     
     const urls = {
-      has_citation: `${URLS.nih.pubMed}&id=<query>`,
+      has_citation: {
+        byCode: `${URLS.nih.pubMed}&id=<query>`,
+        byTerm: `${URLS.nih.pubMed}&term=<query>`,
+      },
       has_origin: `${URLS.sciCrunch.base}<query>`,
       has_dataset: `${URLS.api.entity.base}entities/<query>`,
       has_cell_type: `${URLS.api.ontology}celltypes/<query>`,
@@ -81,20 +85,35 @@ const API = {
       const hasCode = query.includes(':');
       const isNum = Number(query) > 0;
       const byCode = hasCode || isNum;
-      const isDiagnosis = predicate === 'has_diagnosis';
+      const {
+          isAssay,
+          isCellType,
+          isHallmark,
+          isDiagnosis,
+          isCitation,
+          isOrigin,
+          isDataset,
+          isExternalSource,
+        } = PREDICATE;
 
       // Handle api param requirements per predicate
 
-      if (predicate === 'has_cell_type' && hasCode) {
+      if (isCellType(predicate) && hasCode) {
         // Remove the preceeding CL: from query
-        _query = query.split(':')[1]
+        _query = query.split(':')[1];
       }
 
-      if (isDiagnosis) {
-        // ADD required DOID: to query
-        _query = isNum && !hasCode ? `DOID:${query}` : query;
+      if (isDiagnosis(predicate) || isCitation(predicate)) {
         url = byCode ? urls[predicate].byCode : urls[predicate].byTerm;
-      } else {
+        if (isDiagnosis()) {
+          // ADD required DOID: to query
+          _query = isNum && !hasCode ? `DOID:${query}` : query;
+        }
+      }  else {
+         if (isOrigin(predicate)) {
+           // API needs .json extension
+           _query = `${query}.json`;
+         }
         url = urls[predicate];
       }
 
@@ -102,8 +121,8 @@ const API = {
       log.debug('API.fetchForForm', url);
       const result = await API.fetch({ url, method: 'GET' });
 
-      if (isDiagnosis && !byCode) {
-        // Get the DOID from results 
+      if (isDiagnosis(predicate) && !byCode) {
+        // Get the DOID from results
         const doids = result.filter((r) => r.code.includes('DOID:'));
         // Use DOID list to return diagnosis list and terms
         const doidPromises = doids.map((r) =>
@@ -113,7 +132,7 @@ const API = {
           }),
         );
         log.debug('API.fetchForForm.isDiagnosis.!byCode', doids);
-        const promises = await Promise.all(doidPromises); 
+        const promises = await Promise.all(doidPromises);
         // Flatten array of arrays
         return promises.flat();
       } else {

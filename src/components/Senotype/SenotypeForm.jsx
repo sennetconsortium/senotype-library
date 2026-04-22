@@ -10,6 +10,8 @@ import log from 'xac-loglevel';
 import FormInputGroup from '../form/FormInputGroup';
 import useAppReducer from '@/reducers/useAppReducer';
 import API from '@/lib/api';
+import PREDICATE from '@/lib/predicate'
+import SelectField from '../form/SelectField';
 
 function SenotypeForm() {
   const [key, setKey] = useState('main');
@@ -18,24 +20,44 @@ function SenotypeForm() {
   const { ontology } = useContext(AppContext)
   const senotypeOntology = use(senotypeOntologyPromise);
   const senotypeOntologyReducer = useAppReducer(senotypeOntology || {});
+  const getOpenStates = () => {
+    return Object.fromEntries(
+      Object.entries(senotypeOntology || {}).map(([key, value]) => [
+        key,
+        false,
+      ]),
+    );
+  }
+  const selectAutocompleteReducer = useAppReducer(
+    getOpenStates()
+  );
 
   const updateSenotypeOntology = useEffectEvent(() => {
     senotypeOntologyReducer.dispatch({ type: 'setAll', value: senotypeOntology }); 
+    selectAutocompleteReducer.dispatch({
+      type: 'setAll',
+      value: getOpenStates(),
+    }); 
   });
 
   useEffect(() => {
     updateSenotypeOntology()
   }, [senotypeOntology])
 
-  const isAssay = (p) => p === 'has_assay';
-  const isCellType = (p) => p === 'has_cell_type';
-  const isHallmark = (p) => p === 'has_hallmark';
-  const isDiagnosis = (p) => p === 'has_diagnosis';
+  const {
+    isAssay,
+    isCellType,
+    isHallmark,
+    isDiagnosis,
+    isCitation,
+    isOrigin,
+    isDataset,
+    isExternalSource,
+  } = PREDICATE;
 
   const getOptions = (predicate) => {
     const options = []
     if (predicate.ontologyKey) {
-      // TODO find source data for taxon
       for (const o in ontology[predicate.ontologyKey].terms) {
         options.push({
           value: formValue({ code: ontology[predicate.ontologyKey].terms[o], term: o}),
@@ -62,34 +84,60 @@ function SenotypeForm() {
   const tab1Predicates = () => {
     const results = Array.from(ubkgPredicates.filter((p) => !isAssay(p.field)));
     for (const a of senotypePredicates) {
-      if (isHallmark(a.field) || isAssay(a.field)) {
-        results.push(a);
-      }
+      results.push(a);
     }
+    results.push({
+      field: 'has_diagnosis',
+      label: 'Diagnosis',
+      ui: {
+        tooltip:
+          'Enter the exact name for the diagnosis from Disease Ontology (e.g. diabetes) or the diagnosis identifier (e.g., DOID:9351, 9351). Use the search button to go to the Disease Ontology site.',
+      },
+    });
     return results
   }
 
   const tab2Predicates = () => {
     const results = [
       {
-        field: 'has_diagnosis',
-        label: 'Diagnosis',
+        field: 'has_citation',
+        label: 'Citation',
         ui: {
           tooltip:
-            'Enter the exact name for the diagnosis from Disease Ontology (e.g. diabetes) or the diagnosis identifier (e.g., DOID:9351, 9351). Use the search button to go to the Disease Ontology site.',
+            'Enter either a string that is in title of a PubMed article or the PMID (e.g., 41705430, PMID:41705430).',
+        },
+      },
+      {
+        field: 'has_origin',
+        label: 'Origin',
+        ui: {
+          tooltip:
+            'Enter the RRID of a resource identified in the RRID Portal (e.g., AB_1598149, RRID:AB_1598149).',
+        },
+      },
+      {
+        field: 'has_dataset',
+        label: 'Dataset',
+        ui: {
+          tooltip:
+            'Use the SenNet ID of a dataset in the Data Portal (e.g, SNT999.ABCD.999).',
         },
       },
     ];
-    for (const a of senotypePredicates) {
-      if (!isHallmark(a.field) && !isAssay(a.field)) {
-        results.push(a);
-      }
-    }
-    results.push({
-      field: 'gender',
-      label: 'Gender',
-      ui: {},
-    });
+    
+
+    return results;
+  };
+
+  const tab2bPredicates = () => {
+    const results = [
+      {
+        field: 'gender',
+        label: 'Gender',
+        ui: {},
+      },
+    ];
+
     return results;
   };
 
@@ -123,6 +171,31 @@ function SenotypeForm() {
       }
     }
 
+    if (isCitation(predicate.field)) {
+      const _result = result.result?.result || {};
+      for (const r in _result) {
+        if (_result[r]?.title) {
+          options.push({
+            label: `${_result[r].title}. ${_result[r].lastauthor}`,
+            value: formValue({ term: _result[r].title, code: r }),
+          });
+        }
+      }
+    }
+
+    if (isOrigin(predicate.field)) {
+      const _result = result.result?.hits?.hits || [];
+      for (const r of _result) {
+        options.push({
+          label: `${r._source.item.name}`,
+          value: formValue({
+            term: r._source.item.name,
+            code: r._source.item.curie,
+          }),
+        });
+      }
+    }
+
     if (options.length) {
       senotypeOntologyReducer.dispatch({
         type: 'setOne',
@@ -132,17 +205,30 @@ function SenotypeForm() {
     }
   }
 
+  const toggleOpen = (field, value) => {
+    selectAutocompleteReducer.dispatch({
+      type: 'setOne',
+      field,
+      value
+    });
+  }
+
 
   const getSearchBehavior = (predicate) => {
-    // TODO: resolve search behavior for cell types
-    // resolve for Diagnosis
-    if (isCellType(predicate.field) || isDiagnosis(predicate.field)) {
+
+    if (isExternalSource(predicate.field)) {
       return {
+        open: selectAutocompleteReducer?.state[predicate.field],
+        onBlur: () => toggleOpen(predicate.field, undefined),
+        onSelect: () => toggleOpen(predicate.field, undefined),
+        onInputKeyDown: (e) => {
+          if (e.key === 'Enter') {
+            fetchForForm(predicate, e.currentTarget.value);
+            toggleOpen(predicate.field, true);
+          }
+        },
         showSearch: {
-          filterOption: false,
-          onSearch: (v) => {
-            fetchForForm(predicate, v);
-          },
+          onSearch: (v) => {},
         },
       };
     } 
@@ -191,47 +277,43 @@ function SenotypeForm() {
             {!loadingPredicates && (
               <>
                 {tab1Predicates().map((p, index) => (
-                  <InputField
-                    key={p.field}
-                    labelTooltip={p.ui.tooltip}
-                    label={
-                      p.label ||
-                      SEARCH_SENOTYPE.searchQuery.facets[p.field]?.label
-                    }
-                    id={p.field}
-                    selectData={getOptions(p)}
-                    controlProps={{
-                      ...getSearchBehavior(p),
-                      defaultValue: senotype[p.field]
-                        ? senotype[p.field][0]?.term
-                        : undefined,
-                      required: p.ui.required,
-                    }}
+                  <SelectField
+                    p={p}
+                    getOptions={getOptions}
+                    getSearchBehavior={getSearchBehavior}
+                    senotype={senotype}
                   />
                 ))}
               </>
             )}
           </AppAccordion>
         </Tab>
-        <Tab eventKey="metadata" title="Metadata">
-          <AppAccordion title={'Diagnosis & Demographics'}>
+        <Tab eventKey="citationDemographics" title="Citation & Demographics">
+          <AppAccordion title={'Citation & Origin'}>
             {loadingPredicates && <Skeleton />}
             {!loadingPredicates && (
               <>
                 {tab2Predicates().map((p, index) => (
-                  <InputField
-                    key={p.field}
-                    labelTooltip={p.ui.tooltip}
-                    label={p.label}
-                    id={p.field}
-                    selectData={getOptions(p)}
-                    controlProps={{
-                      ...getSearchBehavior(p),
-                      defaultValue: senotype[p.field]
-                        ? senotype[p.field][0]?.term
-                        : undefined,
-                      required: p.ui.required,
-                    }}
+                  <SelectField
+                    p={p}
+                    getOptions={getOptions}
+                    getSearchBehavior={getSearchBehavior}
+                    senotype={senotype}
+                  />
+                ))}
+              </>
+            )}
+          </AppAccordion>
+          <AppAccordion title={'Demographics'}>
+            {loadingPredicates && <Skeleton />}
+            {!loadingPredicates && (
+              <>
+                {tab2bPredicates().map((p, index) => (
+                  <SelectField
+                    p={p}
+                    getOptions={getOptions}
+                    getSearchBehavior={getSearchBehavior}
+                    senotype={senotype}
                   />
                 ))}
               </>
@@ -243,21 +325,21 @@ function SenotypeForm() {
                   label: 'Value',
                   controlProps: {
                     type: 'number',
-                    min: 0
+                    min: 0,
                   },
                 },
                 {
                   label: 'Lower',
                   controlProps: {
                     type: 'number',
-                    min: 0
+                    min: 0,
                   },
                 },
                 {
                   label: 'Upper',
                   controlProps: {
                     type: 'number',
-                    min: 0
+                    min: 0,
                   },
                 },
                 {
@@ -277,21 +359,21 @@ function SenotypeForm() {
                   label: 'Value',
                   controlProps: {
                     type: 'number',
-                    min: 0
+                    min: 0,
                   },
                 },
                 {
                   label: 'Lower',
                   controlProps: {
                     type: 'number',
-                    min: 0
+                    min: 0,
                   },
                 },
                 {
                   label: 'Upper',
                   controlProps: {
                     type: 'number',
-                    min: 0
+                    min: 0,
                   },
                 },
                 {

@@ -3,7 +3,7 @@ import {useContext} from 'react';
 import { useParams } from 'next/navigation';
 import { useSenotype } from '@/hooks/useFetchSenotype';
 import BasicLayout from '@/components/layout/BasicLayout';
-import EditSenotype from '@/components/Senotype/EditSenotype';
+import EditSenotype from '@/components/senotype/EditSenotype';
 import { EditProvider } from '@/context/EditContext';
 import AppSpinner from '@/components/AppSpinner';
 import Unauthorized from '@/components/errors/Unauthorized';

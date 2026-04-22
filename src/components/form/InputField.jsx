@@ -11,6 +11,7 @@ function InputField({
   className = '',
   selectData,
   labelTooltip,
+  dropIcon,
   controlProps = {},
 }) {
   const _id = id || label.toCamelCase();
@@ -49,7 +50,7 @@ function InputField({
 
       {selectData && (
         <Select
-          suffixIcon={<i className="bi bi-chevron-down"></i>}
+          suffixIcon={dropIcon || <i className="bi bi-chevron-down"></i>}
           showSearch={{
             optionFilterProp: 'label',
             onSearch: (v) => log.info('InputField.Select', v),
