@@ -8,7 +8,7 @@ import { ubkgPredicates, SEARCH_SENOTYPE } from '@/config/search/senotype';
 import { Skeleton } from 'antd';
 import log from 'xac-loglevel';
 import FormInputGroup from '../form/FormInputGroup';
-import useSenotypeOntology from '@/reducers/useSenotypeOntology';
+import useAppReducer from '@/reducers/useAppReducer';
 import API from '@/lib/api';
 
 function SenotypeForm() {
@@ -17,7 +17,7 @@ function SenotypeForm() {
     useContext(EditContext);
   const { ontology } = useContext(AppContext)
   const senotypeOntology = use(senotypeOntologyPromise);
-  const senotypeOntologyReducer = useSenotypeOntology(senotypeOntology || {});
+  const senotypeOntologyReducer = useAppReducer(senotypeOntology || {});
 
   const updateSenotypeOntology = useEffectEvent(() => {
     senotypeOntologyReducer.dispatch({ type: 'setAll', value: senotypeOntology }); 

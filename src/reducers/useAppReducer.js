@@ -1,9 +1,9 @@
 import { useReducer } from 'react';
 import log from 'xac-loglevel'
 
-function useSenotypeOntology({initialState}) {
+function useAppReducer({initialState}) {
   function reducer(state, action) {
-    log.debug('useSenotypeOntology', state, action);
+    log.debug('useAppReducer', state, action);
     switch (action.type) {
       case 'setOne': {
         return { ...state, [action.field]: action.value };
@@ -12,7 +12,7 @@ function useSenotypeOntology({initialState}) {
         return { ... action.value };
       }
     }
-    throw Error('useSenotypeOntology > Unknown action: ' + action.type);
+    throw Error('useAppReducer > Unknown action: ' + action.type);
   }
 
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -20,4 +20,4 @@ function useSenotypeOntology({initialState}) {
   return {state, dispatch};
 }
 
-export default useSenotypeOntology;
+export default useAppReducer;
