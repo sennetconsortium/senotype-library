@@ -31,18 +31,21 @@ const URLS = {
     home: process.env.NEXT_PUBLIC_CL_HOME_URL,
   },
   doid: {
-    home: process.env.NEXT_PUBLIC_DOID_HOME_URL,
+    base: process.env.NEXT_PUBLIC_DOID_BASE_URL,
   },
   uniprotkb: process.env.NEXT_PUBLIC_UNIPROTKB_BASE_URL,
   obo: process.env.NEXT_PUBLIC_OBO_BASE_URL,
   hgnc: {
     base: process.env.NEXT_PUBLIC_HGNC_BASE_URL,
-    home: process.env.NEXT_PUBLIC_HGNC_HOME_URL,
+    symbolReport: `${process.env.NEXT_PUBLIC_HGNC_BASE_URL}data/gene-symbol-report/#!/hgnc_id/`,
+  },
+  rrid: {
+    base: process.env.NEXT_PUBLIC_RRID_BASE_URL,
   },
   sciCrunch: {
     base: process.env.NEXT_PUBLIC_SCICRUNCH_BASE_URL,
-    explore: process.env.NEXT_PUBLIC_SCICRUNCH_EXPLORE_URL,
-    higher: process.env.NEXT_PUBLIC_SCICRUNCH_HIGHER_URL,
+    resolver: `${process.env.NEXT_PUBLIC_SCICRUNCH_BASE_URL}resolver/`,
+    higher: `${process.env.NEXT_PUBLIC_SCICRUNCH_BASE_URL}scicrunch/resolver/`,
   },
   /**
    * Takes the organ hierarchy term and returns a src img url.
@@ -104,7 +107,7 @@ const URLS = {
       let lowerParam = searchTerm.split('-')[0];
       searchTerm = `${lowerParam}?i=rrid%3A${searchTerm}`;
     } else {
-      baseUrl = URLS.sciCrunch.base;
+      baseUrl = URLS.sciCrunch.resolver;
     }
     return `${baseUrl}${searchTerm}`;
   },
@@ -123,9 +126,9 @@ const URLS = {
       baseURL = URLS.obo;
     } else if (sab.toUpperCase() === 'HGNC') {
       if (id === '') {
-        baseURL = URLS.hgnc.home;
-      } else {
         baseURL = URLS.hgnc.base;
+      } else {
+        baseURL = URLS.hgnc.symbolReport;
       }
     } else if (sab.toUpperCase() === 'UNIPROTKB') {
       // Strip the SAB from the code.

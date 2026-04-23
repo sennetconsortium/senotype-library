@@ -70,7 +70,7 @@ const API = {
         byCode: `${URLS.nih.pubMed}&id=<query>`,
         byTerm: `${URLS.nih.pubMed}&term=<query>`,
       },
-      has_origin: `${URLS.sciCrunch.base}<query>`,
+      has_origin: `${URLS.sciCrunch.resolver}<query>`,
       has_dataset: `${URLS.api.entity.base}entities/search`, //TODO: point to search-api
       has_cell_type: `${URLS.api.ontology}celltypes/<query>`,
       has_diagnosis: {
