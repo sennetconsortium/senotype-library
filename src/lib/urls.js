@@ -4,6 +4,7 @@ const URLS = {
   login: process.env.NEXT_PUBLIC_LOGIN_URL,
   edit: '/edit',
   search: '/search',
+  senotypeLibrary: process.env.NEXT_PUBLIC_SENOTYPE_LIB_BASE_URL,
   api: {
     local: (path) => `/api/${path}`,
     entity: {

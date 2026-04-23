@@ -4,7 +4,7 @@ import { Button, Tab, Tabs } from 'react-bootstrap';
 import AppAccordion from '../AppAccordion';
 import InputField from '../form/InputField';
 import AppContext from '@/context/AppContext';
-import { ubkgPredicates, SEARCH_SENOTYPE } from '@/config/search/senotype';
+import { ubkgPredicates } from '@/config/search/senotype';
 import { Skeleton } from 'antd';
 import log from 'xac-loglevel';
 import FormInputGroup from '../form/FormInputGroup';
@@ -16,10 +16,9 @@ import MarkerFormInputs from '../form/MarkerFormInputs';
 
 function SenotypeForm() {
   const [key, setKey] = useState('main');
-  const { senotype, senotypeOntologyPromise, senotypePredicates, formValue } =
-    useContext(EditContext);
+  const { senotype, senotypeOntology, formValue } = useContext(EditContext);
   const { ontology } = useContext(AppContext)
-  const senotypeOntology = use(senotypeOntologyPromise);
+
   const senotypeOntologyReducer = useAppReducer(senotypeOntology || {});
   const getOpenStates = () => {
     return Object.fromEntries(
@@ -65,17 +64,6 @@ function SenotypeForm() {
           label: o,
         });
       }
-    } else if (predicate.field === 'gender') {
-      return [
-        {
-          value: 'male',
-          label: 'Male',
-        },
-        {
-          value: 'female',
-          label: 'Female',
-        },
-      ];
     } else {
       return senotypeOntologyReducer?.state[predicate.field] || [];
     }
@@ -83,10 +71,29 @@ function SenotypeForm() {
   }
 
   const tab1Predicates = () => {
-    const results = Array.from(ubkgPredicates.filter((p) => !isAssay(p.field)));
-    for (const a of senotypePredicates) {
-      results.push(a);
-    }
+    const results = [
+      ...ubkgPredicates.filter((p) => !isAssay(p.field)),
+      {
+        field: 'has_assay',
+        label: 'Assay',
+        ui: {},
+      },
+      {
+        field: 'has_hallmark',
+        label: 'Hallmark',
+        ui: { required: true },
+      },
+      {
+        field: 'has_inducer',
+        label: 'Inducer',
+        ui: {},
+      },
+      {
+        field: 'has_microenvironment',
+        label: 'Microenvironment',
+        ui: {},
+      },
+    ];
     results.push({
       field: 'has_diagnosis',
       label: 'Diagnosis',
@@ -133,8 +140,8 @@ function SenotypeForm() {
   const tab2bPredicates = () => {
     const results = [
       {
-        field: 'gender',
-        label: 'Gender',
+        field: 'has_sex',
+        label: 'Sex',
         ui: {},
       },
     ];

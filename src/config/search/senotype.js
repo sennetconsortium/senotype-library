@@ -6,7 +6,6 @@ import AUTH from '@/lib/auth';
 
 export const ubkgPredicates = [
   {
-    ontologyKey: 'source_types',
     field: 'in_taxon',
     ui: { w: 100, required: true },
   },
