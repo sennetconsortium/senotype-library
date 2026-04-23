@@ -314,7 +314,7 @@ const buildReferences = (senotype) => {
               {item.term}{' '}
               <a
                 target={'_blank'}
-                href={`${process.env.NEXT_PUBLIC_PORTAL_URL}dataset?uuid=${item.uuid}`}
+                href={`${URLS.portal}dataset?uuid=${item.uuid}`}
               >
                 <LinkOutlined />
               </a>
