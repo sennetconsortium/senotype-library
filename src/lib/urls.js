@@ -1,4 +1,4 @@
-import log from 'xac-loglevel'
+import log from 'xac-loglevel';
 
 const URLS = {
   login: process.env.NEXT_PUBLIC_LOGIN_URL,
@@ -7,28 +7,29 @@ const URLS = {
   api: {
     local: (path) => `/api/${path}`,
     entity: {
-      base: process.env.NEXT_PUBLIC_ENTITY_API_BASE,
+      base: process.env.NEXT_PUBLIC_ENTITY_API_BASE_URL,
     },
     ingest: {
-      base: process.env.NEXT_PUBLIC_INGEST_API_BASE,
+      base: process.env.NEXT_PUBLIC_INGEST_API_BASE_URL,
       privs: {
-        admin: process.env.NEXT_PUBLIC_INGEST_API_BASE + 'privs/has-data-admin',
+        admin: process.env.NEXT_PUBLIC_INGEST_API_BASE_URL + 'privs/has-data-admin',
         senotypeEdit:
-          process.env.NEXT_PUBLIC_INGEST_API_BASE + 'privs/has-senotype-edit',
+          process.env.NEXT_PUBLIC_INGEST_API_BASE_URL + 'privs/has-senotype-edit',
         groups:
-          process.env.NEXT_PUBLIC_INGEST_API_BASE + 'privs/user-write-groups',
+          process.env.NEXT_PUBLIC_INGEST_API_BASE_URL + 'privs/user-write-groups',
       },
     },
-    search: process.env.NEXT_PUBLIC_SEARCH_API_BASE,
-    ontology: process.env.NEXT_PUBLIC_ONTOLOGY_API_BASE,
+    search: process.env.NEXT_PUBLIC_SEARCH_API_BASE_URL,
+    ontology: process.env.NEXT_PUBLIC_ONTOLOGY_API_BASE_URL,
   },
   nih: {
-    pubMed: process.env.NEXT_PUBLIC_NIH_PUBMED_API_URL,
+    base: process.NEXT_PUBLIC_NIH_EUTILS_BASE_URL,
+    pubMed: `${process.NEXT_PUBLIC_NIH_EUTILS_BASE_URL}entrez/eutils/esummary.fcgi?db=pubmed&retmode=json`,
   },
-  senotypeEditor: process.env.NEXT_PUBLIC_EDITOR_URL,
-  portal: process.env.NEXT_PUBLIC_PORTAL_URL,
+  senotypeEditor: process.env.NEXT_PUBLIC_EDITOR_BASE_URL,
+  portal: process.env.NEXT_PUBLIC_PORTAL_BASE_URL,
   ontologyClasses: {
-    home: process.env.NEXT_PUBLIC_CL_HOME_URL,
+    home: `${process.env.NEXT_PUBLIC_CL_BASE_URL}ols4/ontologies/cl?tab=classes`,
   },
   doid: {
     base: process.env.NEXT_PUBLIC_DOID_BASE_URL,
