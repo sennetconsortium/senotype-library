@@ -42,7 +42,7 @@ const API = {
     let jsonData = await API.search(body, ENVS.index.senotype, token);
     if (jsonData.hasOwnProperty('error')) {
       log.error(jsonData.error);
-      return data;
+      return jsonData;
     } else {
       let total = jsonData['hits']['total']['value'];
       if (total !== 0) {
