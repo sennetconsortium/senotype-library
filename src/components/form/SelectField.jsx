@@ -1,6 +1,7 @@
 import { SEARCH_SENOTYPE } from '@/config/search/senotype';
 import InputField from './InputField';
 import PREDICATE from '@/lib/predicate';
+import AppSpinner from '../AppSpinner';
 
 function SelectField({
   p,
@@ -9,6 +10,7 @@ function SelectField({
   senotype,
   useSearchIcon,
   onChange,
+  isBusy,
   mode = 'multiple',
 }) {
   return (
@@ -29,16 +31,21 @@ function SelectField({
           ...getSearchBehavior(p),
           mode,
           notFoundContent: (
-            <span className="text-black">
-              {p.ui.tooltip && (
-                <span>
-                  {p.ui.tooltip}
-                  <br /> Then press <strong>ENTER or return</strong> key to
-                  perform search.
+            <>
+              {!isBusy && (
+                <span className="text-black">
+                  {p.ui.tooltip && (
+                    <span>
+                      {p.ui.tooltip}
+                      <br /> Then press <strong>ENTER or return</strong> key to
+                      perform search.
+                    </span>
+                  )}
+                  {!p.ui.tooltip && <span>No results found.</span>}
                 </span>
               )}
-              {!p.ui.tooltip && <span>No results found.</span>}
-            </span>
+              {isBusy && <AppSpinner size={'small'} fullscreen={false} />}
+            </>
           ),
           defaultValue: senotype[p.field]
             ? senotype[p.field][0]?.term

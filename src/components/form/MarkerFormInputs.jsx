@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Flex, Radio, message, Upload, Table } from 'antd';
+import { Flex, Radio, message, Upload, Table, Skeleton } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
 const { Dragger } = Upload;
 import { Form } from 'react-bootstrap';
@@ -10,6 +10,7 @@ import { Tooltip } from 'antd';
 import { flipObj } from '@/lib/general';
 import API from '@/lib/api';
 import URLS from '@/lib/urls';
+import AppSpinner from '../AppSpinner';
 
 function MarkerFormInputs({
   predicate,
@@ -18,16 +19,17 @@ function MarkerFormInputs({
   senotype,
   onChange,
   handleMarkers,
+  busy,
 }) {
   const [tableData, setTableData] = useState([]);
   const isValidFile = useRef(null);
-  const uploadRows = useRef([])
+  const uploadRows = useRef([]);
+  const [tableBusy, setTableBusy] = useState(false);
 
-  
   /**
    * Removes a row from table
    *
-   * @param {object} row 
+   * @param {object} row
    */
   const removeItem = (row) => {
     const _tableData = tableData.filter((r) => row._id !== r._id);
@@ -72,16 +74,15 @@ function MarkerFormInputs({
     return columns;
   };
 
-  
   /**
    * Fetches a single code.
    *
    * @async
-   * @param {{ predicate: any; _query: any; regulatingAction: any; }} props 
-   * @param {object} props.predicate 
-   * @param {string} props._query 
-   * @param {string} props.regulatingAction 
-   * @returns {*} 
+   * @param {{ predicate: any; _query: any; regulatingAction: any; }} props
+   * @param {object} props.predicate
+   * @param {string} props._query
+   * @param {string} props.regulatingAction
+   * @returns {*}
    */
   const fetchForForm = async ({ predicate, _query, regulatingAction }) => {
     const data = await API.fetch({
@@ -103,10 +104,11 @@ function MarkerFormInputs({
 
   /**
    * Validate the rows from the uploaded CSV.
-   * 
-   * @param {object} uploadData 
+   *
+   * @param {object} uploadData
    */
   const validateRows = async (uploadData) => {
+    setTableBusy(true);
     let _query, regulatingAction;
     const promises = [];
     const regulatingActions = flipObj(PREDICATE.regulatingActions);
@@ -120,15 +122,15 @@ function MarkerFormInputs({
 
     await Promise.all(promises);
     log.debug('MarkerFormInputs.validateRows', uploadRows.current);
-    const results = uploadRows.current.map((i) => i.value)
-    addToTable(results)
-  }
+    const results = uploadRows.current.map((i) => i.value);
+    addToTable(results);
+    setTableBusy(false);
+  };
 
-  
   /**
    * Handles a file upload.
    *
-   * @param {File} file 
+   * @param {File} file
    */
   const onChangeDataFile = (file) => {
     if (file && isValidFile.current) {
@@ -136,12 +138,9 @@ function MarkerFormInputs({
 
       reader.onload = (e) => {
         const fileContents = e.target.result;
-        const json = fileContents.csvToJson()
-        log.debug(
-          'MarkerFormInputs.onChangeDataFile',
-          json,
-        );
-        validateRows(json)
+        const json = fileContents.csvToJson();
+        log.debug('MarkerFormInputs.onChangeDataFile', json);
+        validateRows(json);
       };
       reader.onerror = (e) => {
         log.error('MarkerForm.onChangeDataFile', e);
@@ -149,7 +148,7 @@ function MarkerFormInputs({
       reader.readAsText(file);
     }
   };
-  
+
   const uploadProps = {
     name: 'file',
     showUploadList: false,
@@ -167,21 +166,27 @@ function MarkerFormInputs({
     },
   };
 
-  
   /**
-   * Handles a user change from 
+   * Handles a user change from
    *
-   * @param {*} data 
+   * @param {*} data
    */
   const handleRadioChange = (data) => {
     log.debug('MarkerFormInputs.handleRadioChange', data);
     onChange({ field: data.target.name, e: data });
   };
 
+  /**
+   * List of formValue strings
+   *
+   * @param {array} list
+   */
   const addToTable = (list) => {
     const _tableData = [...tableData];
-    const added = new Set(_tableData.map((t) => `${t.code}-${t.regulating_action}`));
-    let newItem, key
+    const added = new Set(
+      _tableData.map((t) => `${t.code}-${t.regulating_action}`),
+    );
+    let newItem, key;
     for (const item of list) {
       newItem = JSON.parse(item);
       key = `${newItem.code}-${newItem.regulating_action}`;
@@ -193,12 +198,18 @@ function MarkerFormInputs({
     setTableData(_tableData);
     onChange({ field: predicate.field, value: JSON.stringify(_tableData) });
     log.debug('MarkerFormInputs.handleOnChange', _tableData);
-  }
-
-  const handleOnChange = (data) => {
-    addToTable([data.e])
   };
 
+  const handleOnChange = (data) => {
+    addToTable([data.e]);
+  };
+
+  /**
+   * The antd Select is always called on selection of an item.
+   *
+   * @param {object} predicate
+   * @returns {object}
+   */
   const _getSearchBehavior = (predicate) => {
     const res = getSearchBehavior(predicate);
     const onSelect = res.onSelect;
@@ -258,6 +269,7 @@ function MarkerFormInputs({
             />
           </div>
         )}
+        {tableBusy && <AppSpinner fullscreen={false} />}
         <SelectField
           p={predicate}
           getOptions={getOptions}
@@ -265,6 +277,7 @@ function MarkerFormInputs({
           senotype={senotype}
           useSearchIcon={true}
           mode={'single'}
+          isBusy={busy.selectBusyReducer.state[predicate.field]}
         />
       </Flex>
 

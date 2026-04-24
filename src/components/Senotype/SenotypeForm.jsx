@@ -34,9 +34,15 @@ function SenotypeForm() {
     getOpenStates()
   );
 
+  const selectBusyReducer = useAppReducer(getOpenStates());
+
   const updateSenotypeOntology = useEffectEvent(() => {
     senotypeOntologyReducer.dispatch({ type: 'setAll', value: senotypeOntology }); 
     selectAutocompleteReducer.dispatch({
+      type: 'setAll',
+      value: getOpenStates(),
+    }); 
+    selectBusyReducer.dispatch({
       type: 'setAll',
       value: getOpenStates(),
     }); 
@@ -192,6 +198,7 @@ function SenotypeForm() {
   }
 
   const fetchForForm = async (predicate, query) => {
+    toggleBusy(predicate.field, true);
     let _query = query
     // Prefix for marker with selected radio or default
     if (isMarker(predicate.field) || isRegulatingMarker(predicate.field)) {
@@ -288,6 +295,7 @@ function SenotypeForm() {
         value: options,
       });
     }
+    toggleBusy(predicate.field, false);
   };
 
   const toggleOpen = (field, value) => {
@@ -295,6 +303,14 @@ function SenotypeForm() {
       type: 'setOne',
       field,
       value
+    });
+  }
+
+  const toggleBusy = (field, value) => {
+    selectBusyReducer.dispatch({
+      type: 'setOne',
+      field,
+      value,
     });
   }
 
@@ -333,7 +349,7 @@ function SenotypeForm() {
     log.info('SenotypeForm.handleSubmit', form)
   }
 
-  const loadingPredicates = !senotypeOntology || !senotypeOntologyReducer.state
+  const loadingPredicates = !senotypeOntology || !senotypeOntologyReducer.state || !selectBusyReducer.state
 
   return (
     <>
@@ -513,6 +529,7 @@ function SenotypeForm() {
                       'For genes, enter HGNC ID, symbol, alias, or past symbol; for proteins, enter UniprotKB ID or symbol.',
                   },
                 }}
+                busy={{ toggleBusy, selectBusyReducer }}
                 handleMarkers={handleMarkers}
                 getOptions={getOptions}
                 getSearchBehavior={getSearchBehavior}
@@ -535,6 +552,7 @@ function SenotypeForm() {
                       'For genes, enter HGNC ID, symbol, alias, or past symbol; for proteins, enter UniprotKB ID or symbol.',
                   },
                 }}
+                busy={{ toggleBusy, selectBusyReducer }}
                 handleMarkers={handleMarkers}
                 getOptions={getOptions}
                 getSearchBehavior={getSearchBehavior}
